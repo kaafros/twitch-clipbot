@@ -2,7 +2,10 @@
 import datetime as dt
 import json
 import os
+import random
+import re
 import subprocess
+import textwrap
 import tempfile
 from pathlib import Path
 
@@ -44,6 +47,7 @@ def get_clips(cfg, token):
             continue
         for c in helix("clips", token, broadcaster_id=users[0]["id"], started_at=since, first=50):
             if c["view_count"] >= cfg["min_views"]:
+                c["broadcaster_login"] = s["name"].lower()
                 clips.append(c)
     return sorted(clips, key=lambda c: c["view_count"], reverse=True)
 
@@ -52,13 +56,67 @@ def download(url, out):
     subprocess.run(["yt-dlp", "-q", "-f", "best[ext=mp4]/best", "-o", str(out), url], check=True)
 
 
-def make_vertical(src, dst):
-    # Blurred full-screen background with the original clip centered on top (1080x1920).
-    vf = ("[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,boxblur=20:5[bg];"
-          "[0:v]scale=1080:-2[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2")
+FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+W, H = 1080, 1920
+
+
+def overlay_text(text):
+    """Keep only characters the font can draw (drops emoji)."""
+    return "".join(ch for ch in text if ord(ch) < 0x2000).strip()
+
+
+def drawtext(textfile, size, y_expr, color="white"):
+    return (f"drawtext=fontfile={FONT}:textfile={textfile}:fontsize={size}:fontcolor={color}:"
+            f"borderw=6:bordercolor=black:line_spacing=12:x=(w-text_w)/2:y={y_expr}")
+
+
+def make_vertical(src, dst, clip, cfg, nice_title):
+    layout = cfg.get("layout", "zoom")
+    streamer_cfg = next((s for s in cfg["streamers"] if s["name"].lower() == clip["broadcaster_login"]), {})
+    tmp = Path(dst).parent
+    title_file, name_file = tmp / f"{clip['id']}_t.txt", tmp / f"{clip['id']}_n.txt"
+    title_file.write_text("\n".join(textwrap.wrap(overlay_text(nice_title), 22)[:3]))
+    name_file.write_text(f"twitch.tv/{clip['broadcaster_login']}")
+
+    if layout == "split" and streamer_cfg.get("facecam"):
+        x, y, w, h = streamer_cfg["facecam"]  # fractions of the frame
+        cam_h = 640
+        vf = (f"[0:v]crop=iw*{w}:ih*{h}:iw*{x}:ih*{y},scale={W}:{cam_h}:force_original_aspect_ratio=increase,"
+              f"crop={W}:{cam_h}[cam];"
+              f"[0:v]scale=-2:{H - cam_h},crop={W}:{H - cam_h}[game];"
+              f"[cam][game]vstack,{drawtext(title_file, 60, cam_h + 40)}")
+    elif layout == "fill":
+        vf = (f"[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},"
+              f"{drawtext(title_file, 64, 220)}")
+    else:  # "zoom" (default) or "blur": blurred background, video in the middle, title on top
+        zoom = cfg.get("zoom", 1.0) if layout == "zoom" else 1.0
+        fg_w = int(W * zoom) // 2 * 2
+        fg_h = int(fg_w * 9 / 16) // 2 * 2
+        top = (H - fg_h) // 2
+        vf = (f"[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},boxblur=25:5,"
+              f"eq=brightness=-0.12[bg];"
+              f"[0:v]scale={fg_w}:{fg_h},crop={W}:{fg_h}[fg];"
+              f"[bg][fg]overlay=0:{top},"
+              f"{drawtext(title_file, 68, f'({top}-text_h)/2')},"
+              f"{drawtext(name_file, 44, f'{top + fg_h}+({top}-text_h)/2', '#bf94ff')}")
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-filter_complex", vf,
-                    "-c:v", "libx264", "-preset", "veryfast", "-crf", "23",
+                    "-c:v", "libx264", "-preset", "veryfast", "-crf", "21",
                     "-c:a", "aac", "-b:a", "128k", "-t", "180", str(dst)], check=True)
+
+
+FALLBACK_TITLES = ["{s} can't believe this", "{s} had chat going crazy", "Wait for it... ({s})",
+                   "{s} lost it", "This {s} moment is insane", "{s} was NOT ready"]
+
+
+def make_title(clip):
+    s = clip["broadcaster_name"]
+    t = re.sub(r"(.)\1{3,}", r"\1\1\1", clip["title"].replace("<", "").replace(">", "")).strip()
+    letters = {c for c in t.lower() if c.isalpha()}
+    if len(letters) < 5 or len(t) < 6:  # junk titles like "HHHHHQ" or "yoooo"
+        t = random.Random(clip["id"]).choice(FALLBACK_TITLES).format(s=s)
+    elif s.lower() not in t.lower():
+        t = f"{s}: {t}"
+    return t[:85].rstrip()
 
 
 def youtube():
@@ -71,8 +129,7 @@ def youtube():
 
 
 def upload(yt, path, clip, cfg):
-    title = clip["title"].replace("<", "").replace(">", "").strip() or "Twitch clip"
-    title = f"{title[:85]} #shorts"
+    title = f"{make_title(clip)} #shorts"
     desc = (f"🎮 Streamer: {clip['broadcaster_name']} — https://twitch.tv/{clip['broadcaster_name'].lower()}\n"
             f"📎 Original clip: {clip['url']}\n\n"
             f"Shared with the streamer's permission. Go follow them!\n#shorts #twitch")
@@ -105,7 +162,7 @@ def main():
             try:
                 raw, vert = Path(tmp, f"{clip['id']}.mp4"), Path(tmp, f"{clip['id']}_v.mp4")
                 download(clip["url"], raw)
-                make_vertical(raw, vert)
+                make_vertical(raw, vert, clip, cfg, make_title(clip))
                 vid = upload(yt, vert, clip, cfg)
                 print(f"Uploaded '{clip['title']}' -> https://youtube.com/shorts/{vid}")
                 posted.add(clip["id"])

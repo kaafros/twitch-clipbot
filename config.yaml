@@ -6,5 +6,13 @@ streamers:
 min_views: 50            # skip clips with fewer views
 lookback_hours: 48       # only clips created in the last N hours
 max_uploads_per_run: 2   # YouTube API quota allows ~6 uploads/day total
-privacy: public          # public | unlisted | private
+privacy: public
+
+# Video layout: zoom (big video, title banner on top) | fill (full-screen crop) |
+#               blur (whole video, small) | split (face-cam on top, needs facecam below)
+layout: zoom
+zoom: 1.0               # >1.0 zooms in (bigger video, but cuts the sides - can hide the face-cam)
+# For split layout, add the face-cam box per streamer as fractions [x, y, width, height], e.g.
+#   - name: somestreamer
+#     facecam: [0.0, 0.25, 0.22, 0.28]          # public | unlisted | private
 tags: [twitch, gaming, shorts, clips]
