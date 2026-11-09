@@ -5,6 +5,6 @@ raw = subprocess.run(["ffmpeg", "-loglevel", "error", "-i", sys.argv[1], "-f", "
                      check=True, capture_output=True).stdout
 audio = np.frombuffer(raw, np.int16).astype(np.float32) / 32768.0
 m = WhisperModel("small.en", device="cpu", compute_type="int8")
-segs, _ = m.transcribe(audio, vad_filter=True)
+segs, _ = m.transcribe(audio, vad_filter=len(sys.argv) < 3)
 for s in segs:
     print(f"TX [{s.start:6.1f}-{s.end:6.1f}] {s.text.strip()}")
