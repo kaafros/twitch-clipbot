@@ -1,0 +1,30 @@
+name: clipbot
+on:
+  schedule:
+    - cron: "17 7,15,21 * * *"   # 3 times a day (UTC)
+  workflow_dispatch:              # lets you run it manually from the Actions tab
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: pip install -r requirements.txt
+      - run: python clipbot.py
+        env:
+          TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
+          TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+      - name: Remember posted clips
+        run: |
+          git config user.name clipbot
+          git config user.email clipbot@users.noreply.github.com
+          git add posted.json
+          git diff --cached --quiet || (git commit -m "Update posted clips" && git push)

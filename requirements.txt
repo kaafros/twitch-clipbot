@@ -1,0 +1,6 @@
+requests
+pyyaml
+yt-dlp
+google-api-python-client
+google-auth
+google-auth-oauthlib
