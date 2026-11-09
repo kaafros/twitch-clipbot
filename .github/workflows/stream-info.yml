@@ -1,0 +1,15 @@
+name: stream-info
+on:
+  workflow_dispatch:
+    inputs:
+      url: {description: "YouTube URL", required: true}
+      start: {description: "Start second", default: "0"}
+jobs:
+  info:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -U yt-dlp
+      - run: python tools/stream_info.py "${{ inputs.url }}" "${{ inputs.start }}"
