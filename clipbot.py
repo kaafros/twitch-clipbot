@@ -155,19 +155,20 @@ def upload(yt, path, clip, cfg):
     return resp["id"]
 
 
-def notify(clip, vid, cfg):
-    """For paid campaigns: open a GitHub issue so the owner gets an instant notification to submit the link."""
-    campaign = streamer_cfg(clip, cfg).get("campaign")
+def submit_alert(label, campaign, yt_url, tt_url):
+    """One GitHub issue (= instant phone/email notification) with every link to submit."""
     token, repo = os.environ.get("GITHUB_TOKEN"), os.environ.get("GITHUB_REPOSITORY")
     if not (campaign and token and repo):
         return
-    url = f"https://youtube.com/shorts/{vid}"
-    body = (f"New **{clip['broadcaster_name']}** Short is live: {url}\n\n"
-            f"Submit it in Content Rewards now (deadline 30 min): {campaign}\n\nClose this issue once submitted.")
+    lines = [f"**{label}** is live. Submit both links in Content Rewards within 30 minutes:", "",
+             f"1. YouTube: {yt_url}"]
+    if tt_url:
+        lines.append(f"2. TikTok: {tt_url}")
+    lines += ["", f"👉 Campaign (click **Submit clip**): {campaign}", "", "Close this issue once submitted."]
     try:
         requests.post(f"https://api.github.com/repos/{repo}/issues", timeout=30,
                       headers={"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json"},
-                      json={"title": f"Submit now: {clip['broadcaster_name']} – {url}", "body": body})
+                      json={"title": f"Submit now: {label}", "body": "\n".join(lines)})
     except Exception as e:
         print(f"Notify failed: {e}")
 
@@ -186,25 +187,15 @@ def upload_batch_item(yt, item, cfg):
     return resp["id"]
 
 
-def notify_batch(item, vid):
-    token, repo = os.environ.get("GITHUB_TOKEN"), os.environ.get("GITHUB_REPOSITORY")
-    if not (item.get("campaign") and token and repo):
-        return
-    url = f"https://youtube.com/shorts/{vid}"
-    requests.post(f"https://api.github.com/repos/{repo}/issues", timeout=30,
-                  headers={"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json"},
-                  json={"title": f"Submit now: {item['id']} – {url}",
-                        "body": f"New campaign Short is live: {url}\n\nSubmit it in Content Rewards now "
-                                f"(deadline 30 min): {item['campaign']}\n\nClose this issue once submitted."})
-
-
 def crosspost(path, caption, name, cfg):
     if not cfg.get("tiktok", True):
         return
     try:
         pid = tiktok.post(str(path), caption.replace("#shorts", "").strip(), f"{name}.mp4")
         if pid:
-            print(f"Posted to TikTok via Buffer: {pid}")
+            link = tiktok.wait_for_link(pid)
+            print(f"Posted to TikTok: {link or pid}")
+            return link or "(TikTok still processing - check your profile)"
     except Exception as e:
         print(f"TikTok post failed: {e}")
 
@@ -222,8 +213,8 @@ def main():
                 print(f"Uploaded batch '{item['id']}' -> https://youtube.com/shorts/{vid}")
                 posted.add(f"batch:{item['id']}")
                 STATE.write_text(json.dumps(sorted(posted), indent=1))
-                notify_batch(item, vid)
-                crosspost(ROOT / item["file"], item.get("tiktok_caption") or item["description"], item["id"], cfg)
+                tt = crosspost(ROOT / item["file"], item.get("tiktok_caption") or item["description"], item["id"], cfg)
+                submit_alert(item["id"], item.get("campaign"), f"https://youtube.com/shorts/{vid}", tt)
                 done += 1
             except Exception as e:
                 print(f"Failed batch {item['id']}: {e}")
@@ -242,9 +233,10 @@ def main():
                 make_vertical(raw, vert, clip, cfg, make_title(clip))
                 vid = upload(yt, vert, clip, cfg)
                 print(f"Uploaded '{clip['title']}' -> https://youtube.com/shorts/{vid}")
-                notify(clip, vid, cfg)
-                crosspost(vert, f"{make_title(clip)} {' '.join(streamer_cfg(clip, cfg).get('hashtags', []))} "
+                tt = crosspost(vert, f"{make_title(clip)} {' '.join(streamer_cfg(clip, cfg).get('hashtags', []))} "
                                 f"#{clip['broadcaster_name']} #twitch #fyp", clip["id"], cfg)
+                submit_alert(f"{clip['broadcaster_name']} clip", streamer_cfg(clip, cfg).get("campaign"),
+                             f"https://youtube.com/shorts/{vid}", tt)
                 posted.add(clip["id"])
                 STATE.write_text(json.dumps(sorted(posted), indent=1))
                 done += 1

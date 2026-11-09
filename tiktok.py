@@ -81,3 +81,21 @@ def post(path, caption, name):
         except Exception as e:
             last = e
     raise RuntimeError(f"Buffer createPost failed: {last}")
+
+
+def wait_for_link(post_id, timeout=300):
+    """Poll Buffer until the TikTok post is live and return its URL (or None)."""
+    end = time.time() + timeout
+    while time.time() < end:
+        try:
+            p = _gql("query($id: PostId!) { post(input: {id: $id}) { status externalLink error { message } } }",
+                     {"id": post_id})["post"]
+        except Exception:
+            p = _gql("query($id: PostId!) { post(input: {id: $id}) { status externalLink } }", {"id": post_id})["post"]
+        if p.get("externalLink"):
+            return p["externalLink"]
+        if p.get("status") == "error":
+            print(f"TikTok post error: {p.get('error')}")
+            return None
+        time.sleep(15)
+    return None
