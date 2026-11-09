@@ -82,7 +82,20 @@ def make_vertical(src, dst, clip, cfg, nice_title):
     title_file.write_text("\n".join(textwrap.wrap(overlay_text(nice_title), 22)[:3]))
     name_file.write_text(clip.get("tag_text") or f"twitch.tv/{clip['broadcaster_login']}")
 
-    if layout == "split" and streamer_cfg.get("facecam"):
+    layout = streamer_cfg.get("layout", layout)
+    extra_inputs = []
+    if layout == "gameplay":
+        # split screen: clip on top, original endless-runner gameplay below (keeps viewers watching)
+        bg = ROOT / cfg.get("gameplay_bg", "assets/bg/runner.mp4")
+        extra_inputs = ["-stream_loop", "-1", "-ss", str(random.Random(clip["id"]).uniform(0, 25)), "-i", str(bg)]
+        half = H // 2
+        top, fg_h = 0, half  # used for subtitle placement
+        vf = (f"[0:v]scale={W}:{half}:force_original_aspect_ratio=increase,crop={W}:{half}[clip];"
+              f"[1:v]scale={W}:{half},setsar=1[game];"
+              f"[clip][game]vstack,"
+              f"drawbox=x=0:y=0:w={W}:h=230:color=black@0.45:t=fill,"
+              f"{drawtext(title_file, 62, '(230-text_h)/2')}")
+    elif layout == "split" and streamer_cfg.get("facecam"):
         x, y, w, h = streamer_cfg["facecam"]  # fractions of the frame
         cam_h = 640
         vf = (f"[0:v]crop=iw*{w}:ih*{h}:iw*{x}:ih*{y},scale={W}:{cam_h}:force_original_aspect_ratio=increase,"
@@ -105,7 +118,9 @@ def make_vertical(src, dst, clip, cfg, nice_title):
               f"{drawtext(name_file, 44, f'{top + fg_h}+({top}-text_h)/2', '#bf94ff')}")
     if cfg.get("subtitles", True):
         try:
-            if layout == "split" and streamer_cfg.get("facecam"):
+            if layout == "gameplay":
+                mv = H // 2 - 70  # centred on the seam between clip and gameplay
+            elif layout == "split" and streamer_cfg.get("facecam"):
                 mv = 520
             elif layout == "fill":
                 mv = 520
@@ -116,9 +131,9 @@ def make_vertical(src, dst, clip, cfg, nice_title):
                 vf += f",subtitles={ass}:fontsdir=/usr/share/fonts/truetype/dejavu"
         except Exception as e:
             print(f"Subtitles skipped: {e}")
-    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-filter_complex", vf,
-                    "-c:v", "libx264", "-preset", "veryfast", "-crf", "21",
-                    "-c:a", "aac", "-b:a", "128k", "-t", "180", str(dst)], check=True)
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), *extra_inputs, "-filter_complex", vf,
+                    "-map", "0:a?", "-c:v", "libx264", "-preset", "veryfast", "-crf", "21",
+                    "-c:a", "aac", "-b:a", "128k", "-t", "180", "-shortest", str(dst)], check=True)
 
 
 FALLBACK_TITLES = ["{s} can't believe this", "{s} had chat going crazy", "Wait for it... ({s})",
