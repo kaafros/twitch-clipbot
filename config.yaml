@@ -1,5 +1,11 @@
 # Only list streamers who have given you permission to repost their clips.
+# priority: higher = posted first. hashtags: added to title + description.
+# campaign: Content Rewards link - you get a GitHub notification to submit each new Short.
 streamers:
+  - name: clix
+    priority: 10
+    hashtags: ["#Clix"]
+    campaign: https://contentrewards.com/c/campaigns/17ff5e37-a774-4a75-a1a4-d47dba98a60e
   - name: kaicenat
   - name: lacyoffline_
 

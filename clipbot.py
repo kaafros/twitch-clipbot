@@ -49,7 +49,8 @@ def get_clips(cfg, token):
             if c["view_count"] >= cfg["min_views"]:
                 c["broadcaster_login"] = s["name"].lower()
                 clips.append(c)
-    return sorted(clips, key=lambda c: c["view_count"], reverse=True)
+    prio = {s["name"].lower(): s.get("priority", 0) for s in cfg["streamers"]}
+    return sorted(clips, key=lambda c: (prio.get(c["broadcaster_login"], 0), c["view_count"]), reverse=True)
 
 
 def download(url, out):
@@ -128,11 +129,17 @@ def youtube():
     return build("youtube", "v3", credentials=creds, cache_discovery=False)
 
 
+def streamer_cfg(clip, cfg):
+    return next((s for s in cfg["streamers"] if s["name"].lower() == clip["broadcaster_login"]), {})
+
+
 def upload(yt, path, clip, cfg):
-    title = f"{make_title(clip)} #shorts"
+    sc = streamer_cfg(clip, cfg)
+    tags_line = " ".join(sc.get("hashtags", []))
+    title = f"{make_title(clip)} {tags_line} #shorts".replace("  ", " ")
     desc = (f"🎮 Streamer: {clip['broadcaster_name']} — https://twitch.tv/{clip['broadcaster_name'].lower()}\n"
             f"📎 Original clip: {clip['url']}\n\n"
-            f"Shared with the streamer's permission. Go follow them!\n#shorts #twitch")
+            f"Shared with the streamer's permission. Go follow them!\n{tags_line} #shorts #twitch".strip())
     body = {
         "snippet": {"title": title, "description": desc, "tags": cfg["tags"] + [clip["broadcaster_name"]],
                     "categoryId": "20"},  # 20 = Gaming
@@ -144,6 +151,23 @@ def upload(yt, path, clip, cfg):
     while resp is None:
         _, resp = req.next_chunk()
     return resp["id"]
+
+
+def notify(clip, vid, cfg):
+    """For paid campaigns: open a GitHub issue so the owner gets an instant notification to submit the link."""
+    campaign = streamer_cfg(clip, cfg).get("campaign")
+    token, repo = os.environ.get("GITHUB_TOKEN"), os.environ.get("GITHUB_REPOSITORY")
+    if not (campaign and token and repo):
+        return
+    url = f"https://youtube.com/shorts/{vid}"
+    body = (f"New **{clip['broadcaster_name']}** Short is live: {url}\n\n"
+            f"Submit it in Content Rewards now (deadline 30 min): {campaign}\n\nClose this issue once submitted.")
+    try:
+        requests.post(f"https://api.github.com/repos/{repo}/issues", timeout=30,
+                      headers={"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json"},
+                      json={"title": f"Submit now: {clip['broadcaster_name']} – {url}", "body": body})
+    except Exception as e:
+        print(f"Notify failed: {e}")
 
 
 def main():
@@ -165,6 +189,7 @@ def main():
                 make_vertical(raw, vert, clip, cfg, make_title(clip))
                 vid = upload(yt, vert, clip, cfg)
                 print(f"Uploaded '{clip['title']}' -> https://youtube.com/shorts/{vid}")
+                notify(clip, vid, cfg)
                 posted.add(clip["id"])
                 STATE.write_text(json.dumps(sorted(posted), indent=1))
                 done += 1
