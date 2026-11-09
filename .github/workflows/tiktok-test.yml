@@ -1,0 +1,20 @@
+name: tiktok-test
+on:
+  workflow_dispatch:
+    inputs:
+      file: {description: "Video file in repo", required: true}
+      caption: {description: "Caption", required: true}
+permissions:
+  contents: write
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install requests
+      - run: python -c "import tiktok,sys; print('Buffer post id:', tiktok.post(sys.argv[1], sys.argv[2], 'test-'+sys.argv[1].split('/')[-1]))" "${{ inputs.file }}" "${{ inputs.caption }}"
+        env:
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

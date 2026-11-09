@@ -1,7 +1,7 @@
 name: clipbot
 on:
   schedule:
-    - cron: "17 7,15,21 * * *"   # 3 times a day (UTC)
+    - cron: "17 8,15,21 * * *"   # 10:17, 17:17, 23:17 Athens (after YouTube quota reset)
   workflow_dispatch:              # lets you run it manually from the Actions tab
 permissions:
   contents: write
