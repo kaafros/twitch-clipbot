@@ -7,7 +7,9 @@ streamers:
     hashtags: ["#Clix"]
     campaign: https://contentrewards.com/c/campaigns/17ff5e37-a774-4a75-a1a4-d47dba98a60e
   - name: kaicenat
+    layout: gameplay      # split screen: clip on top, runner game below
   - name: lacyoffline_
+    layout: gameplay
 
 min_views: 50            # skip clips with fewer views
 lookback_hours: 48       # only clips created in the last N hours
