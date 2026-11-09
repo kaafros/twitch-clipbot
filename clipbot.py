@@ -15,6 +15,8 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
+import tiktok
+
 ROOT = Path(__file__).parent
 STATE = ROOT / "posted.json"
 
@@ -196,6 +198,17 @@ def notify_batch(item, vid):
                                 f"(deadline 30 min): {item['campaign']}\n\nClose this issue once submitted."})
 
 
+def crosspost(path, caption, name, cfg):
+    if not cfg.get("tiktok", True):
+        return
+    try:
+        pid = tiktok.post(str(path), caption.replace("#shorts", "").strip(), f"{name}.mp4")
+        if pid:
+            print(f"Posted to TikTok via Buffer: {pid}")
+    except Exception as e:
+        print(f"TikTok post failed: {e}")
+
+
 def main():
     cfg = yaml.safe_load((ROOT / "config.yaml").read_text())
     posted = set(json.loads(STATE.read_text())) if STATE.exists() else set()
@@ -210,6 +223,7 @@ def main():
                 posted.add(f"batch:{item['id']}")
                 STATE.write_text(json.dumps(sorted(posted), indent=1))
                 notify_batch(item, vid)
+                crosspost(ROOT / item["file"], item.get("tiktok_caption") or item["description"], item["id"], cfg)
                 done += 1
             except Exception as e:
                 print(f"Failed batch {item['id']}: {e}")
@@ -229,6 +243,8 @@ def main():
                 vid = upload(yt, vert, clip, cfg)
                 print(f"Uploaded '{clip['title']}' -> https://youtube.com/shorts/{vid}")
                 notify(clip, vid, cfg)
+                crosspost(vert, f"{make_title(clip)} {' '.join(streamer_cfg(clip, cfg).get('hashtags', []))} "
+                                f"#{clip['broadcaster_name']} #twitch #fyp", clip["id"], cfg)
                 posted.add(clip["id"])
                 STATE.write_text(json.dumps(sorted(posted), indent=1))
                 done += 1

@@ -13,6 +13,7 @@ min_views: 50            # skip clips with fewer views
 lookback_hours: 48       # only clips created in the last N hours
 max_uploads_per_run: 2   # YouTube API quota allows ~6 uploads/day total
 privacy: public
+tiktok: true            # also post every Short to TikTok via Buffer (needs BUFFER_API_KEY secret)
 
 # Video layout: zoom (big video, title banner on top) | fill (full-screen crop) |
 #               blur (whole video, small) | split (face-cam on top, needs facecam below)
