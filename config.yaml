@@ -1,7 +1,7 @@
 # Only list streamers who have given you permission to repost their clips.
 streamers:
-  - name: example_streamer      # Twitch login name (from twitch.tv/<name>)
-  # - name: another_streamer
+  - name: kaicenat
+  - name: lacyoffline_
 
 min_views: 50            # skip clips with fewer views
 lookback_hours: 48       # only clips created in the last N hours
