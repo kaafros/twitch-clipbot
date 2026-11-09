@@ -15,6 +15,7 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
+import captions
 import tiktok
 
 ROOT = Path(__file__).parent
@@ -102,6 +103,19 @@ def make_vertical(src, dst, clip, cfg, nice_title):
               f"[bg][fg]overlay=0:{top},"
               f"{drawtext(title_file, 68, f'({top}-text_h)/2')},"
               f"{drawtext(name_file, 44, f'{top + fg_h}+({top}-text_h)/2', '#bf94ff')}")
+    if cfg.get("subtitles", True):
+        try:
+            if layout == "split" and streamer_cfg.get("facecam"):
+                mv = 520
+            elif layout == "fill":
+                mv = 520
+            else:
+                mv = H - (top + fg_h) + 20  # just over the bottom edge of the video
+            ass = captions.build(src, tmp / f"{clip['id']}.ass", margin_v=mv)
+            if ass:
+                vf += f",subtitles={ass}:fontsdir=/usr/share/fonts/truetype/dejavu"
+        except Exception as e:
+            print(f"Subtitles skipped: {e}")
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-filter_complex", vf,
                     "-c:v", "libx264", "-preset", "veryfast", "-crf", "21",
                     "-c:a", "aac", "-b:a", "128k", "-t", "180", str(dst)], check=True)
@@ -173,6 +187,17 @@ def submit_alert(label, campaign, yt_url, tt_url):
         print(f"Notify failed: {e}")
 
 
+def burn_subtitles(src, dst, margin_v):
+    """Add auto subtitles to an already-vertical video. Returns dst, or src if there was no speech."""
+    ass = captions.build(src, Path(dst).with_suffix(".ass"), margin_v=margin_v)
+    if not ass:
+        return src
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-vf",
+                    f"subtitles={ass}:fontsdir=/usr/share/fonts/truetype/dejavu",
+                    "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-c:a", "copy", str(dst)], check=True)
+    return dst
+
+
 def upload_batch_item(yt, item, cfg):
     body = {
         "snippet": {"title": item["title"][:100], "description": item["description"], "tags": item.get("tags", []),
@@ -180,7 +205,7 @@ def upload_batch_item(yt, item, cfg):
         "status": {"privacyStatus": cfg["privacy"], "selfDeclaredMadeForKids": False},
     }
     req = yt.videos().insert(part="snippet,status", body=body,
-                             media_body=MediaFileUpload(str(ROOT / item["file"]), chunksize=-1, resumable=True))
+                             media_body=MediaFileUpload(str(item["_path"]), chunksize=-1, resumable=True))
     resp = None
     while resp is None:
         _, resp = req.next_chunk()
@@ -209,11 +234,18 @@ def main():
         yt = youtube()
         for item in pending[: cfg.get("batch_per_run", 1)]:
             try:
+                item["_path"] = ROOT / item["file"]
+                if cfg.get("subtitles", True):
+                    try:
+                        item["_path"] = burn_subtitles(item["_path"], Path(tempfile.gettempdir()) / f"{item['id']}_sub.mp4",
+                                                       item.get("subs_margin", 570))
+                    except Exception as e:
+                        print(f"Subtitles skipped: {e}")
                 vid = upload_batch_item(yt, item, cfg)
                 print(f"Uploaded batch '{item['id']}' -> https://youtube.com/shorts/{vid}")
                 posted.add(f"batch:{item['id']}")
                 STATE.write_text(json.dumps(sorted(posted), indent=1))
-                tt = crosspost(ROOT / item["file"], item.get("tiktok_caption") or item["description"], item["id"], cfg)
+                tt = crosspost(item["_path"], item.get("tiktok_caption") or item["description"], item["id"], cfg)
                 submit_alert(item["id"], item.get("campaign"), f"https://youtube.com/shorts/{vid}", tt)
                 done += 1
             except Exception as e:
