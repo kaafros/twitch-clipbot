@@ -77,7 +77,7 @@ def make_vertical(src, dst, clip, cfg, nice_title):
     tmp = Path(dst).parent
     title_file, name_file = tmp / f"{clip['id']}_t.txt", tmp / f"{clip['id']}_n.txt"
     title_file.write_text("\n".join(textwrap.wrap(overlay_text(nice_title), 22)[:3]))
-    name_file.write_text(f"twitch.tv/{clip['broadcaster_login']}")
+    name_file.write_text(clip.get("tag_text") or f"twitch.tv/{clip['broadcaster_login']}")
 
     if layout == "split" and streamer_cfg.get("facecam"):
         x, y, w, h = streamer_cfg["facecam"]  # fractions of the frame
@@ -170,15 +170,54 @@ def notify(clip, vid, cfg):
         print(f"Notify failed: {e}")
 
 
+def upload_batch_item(yt, item, cfg):
+    body = {
+        "snippet": {"title": item["title"][:100], "description": item["description"], "tags": item.get("tags", []),
+                    "categoryId": "20"},
+        "status": {"privacyStatus": cfg["privacy"], "selfDeclaredMadeForKids": False},
+    }
+    req = yt.videos().insert(part="snippet,status", body=body,
+                             media_body=MediaFileUpload(str(ROOT / item["file"]), chunksize=-1, resumable=True))
+    resp = None
+    while resp is None:
+        _, resp = req.next_chunk()
+    return resp["id"]
+
+
+def notify_batch(item, vid):
+    token, repo = os.environ.get("GITHUB_TOKEN"), os.environ.get("GITHUB_REPOSITORY")
+    if not (item.get("campaign") and token and repo):
+        return
+    url = f"https://youtube.com/shorts/{vid}"
+    requests.post(f"https://api.github.com/repos/{repo}/issues", timeout=30,
+                  headers={"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json"},
+                  json={"title": f"Submit now: {item['id']} – {url}",
+                        "body": f"New campaign Short is live: {url}\n\nSubmit it in Content Rewards now "
+                                f"(deadline 30 min): {item['campaign']}\n\nClose this issue once submitted."})
+
+
 def main():
     cfg = yaml.safe_load((ROOT / "config.yaml").read_text())
     posted = set(json.loads(STATE.read_text())) if STATE.exists() else set()
+    done = 0
+    pending = [b for b in cfg.get("batches", []) if f"batch:{b['id']}" not in posted]
+    if pending:
+        yt = youtube()
+        for item in pending[: cfg.get("batch_per_run", 1)]:
+            try:
+                vid = upload_batch_item(yt, item, cfg)
+                print(f"Uploaded batch '{item['id']}' -> https://youtube.com/shorts/{vid}")
+                posted.add(f"batch:{item['id']}")
+                STATE.write_text(json.dumps(sorted(posted), indent=1))
+                notify_batch(item, vid)
+                done += 1
+            except Exception as e:
+                print(f"Failed batch {item['id']}: {e}")
     new = [c for c in get_clips(cfg, twitch_token()) if c["id"] not in posted]
     print(f"{len(new)} new clips found")
     if not new:
         return
     yt = youtube()
-    done = 0
     with tempfile.TemporaryDirectory() as tmp:
         for clip in new:
             if done >= cfg["max_uploads_per_run"]:

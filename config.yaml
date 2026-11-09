@@ -22,3 +22,25 @@ zoom: 1.0               # >1.0 zooms in (bigger video, but cuts the sides - can 
 #   - name: somestreamer
 #     facecam: [0.0, 0.25, 0.22, 0.28]          # public | unlisted | private
 tags: [twitch, gaming, shorts, clips]
+
+# Pre-made campaign clips. Posted before Twitch clips, batch_per_run at a time.
+batch_per_run: 1
+batches:
+  - id: speed-expedia-2
+    file: batches/speed/speed-expedia-2.mp4
+    title: "IShowSpeed tells a fan he's going to JAPAN with Expedia 🇯🇵 #IShowSpeed #shorts"
+    description: |
+      IShowSpeed and Expedia surprise a fan, Hudson, with a dream trip to Japan 🇯🇵✈️
+      From IShowSpeed's 6 Nov 2026 stream: https://www.youtube.com/@IShowSpeed
+      #IShowSpeed #Expedia #Japan #shorts
+    tags: [IShowSpeed, Expedia, Japan, travel, shorts]
+    campaign: https://contentrewards.com/c/campaigns/afeca1a0-f44c-46ad-8194-09d62b56589e
+  - id: speed-expedia-1
+    file: batches/speed/speed-expedia-1.mp4
+    title: "IShowSpeed x Expedia surprise a fan with a dream trip to Japan 🇯🇵 #IShowSpeed #shorts"
+    description: |
+      IShowSpeed teamed up with Expedia to give fans the trip of a lifetime, and Hudson is going to Japan 🇯🇵
+      From IShowSpeed's 6 Nov 2026 stream: https://www.youtube.com/@IShowSpeed
+      #IShowSpeed #Expedia #Japan #shorts
+    tags: [IShowSpeed, Expedia, Japan, travel, shorts]
+    campaign: https://contentrewards.com/c/campaigns/afeca1a0-f44c-46ad-8194-09d62b56589e
