@@ -46,6 +46,9 @@ def host_video(path, name):
         r = _gh("POST", f"https://api.github.com/repos/{repo}/releases",
                 json={"tag_name": "media", "name": "media", "body": "Temporary video hosting for TikTok posts"})
     rel = r.json()
+    for a in rel.get("assets", []):
+        if a["name"] == name:  # already hosted (e.g. a retry)
+            return a["browser_download_url"]
     # clean up assets older than 3 days
     for a in rel.get("assets", []):
         if time.time() - time.mktime(time.strptime(a["created_at"], "%Y-%m-%dT%H:%M:%SZ")) > 3 * 86400:
