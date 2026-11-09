@@ -1,10 +1,17 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>clipbot – Privacy policy</title>
-<style>body{font-family:system-ui,sans-serif;max-width:640px;margin:40px auto;padding:0 16px;line-height:1.6}</style></head><body>
-<h1>Privacy policy</h1><p>Last updated: 9 November 2026</p>
-<p>clipbot is a personal automation used only by its owner. It requests one Google permission, <code>youtube.upload</code>, solely to upload videos to the owner's own YouTube channel.</p>
-<ul><li>It does not collect, store, sell or share personal data from anyone.</li>
-<li>Google access credentials are stored only as encrypted GitHub Actions secrets controlled by the owner.</li>
-<li>It reads only public Twitch clip information through the Twitch API.</li>
-<li>Access can be revoked at any time at <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a>.</li></ul>
-<p>clipbot's use of information received from Google APIs adheres to the Google API Services User Data Policy, including the Limited Use requirements.</p>
-<p>Contact: open an issue at <a href="https://github.com/kaafros/twitch-clipbot">github.com/kaafros/twitch-clipbot</a>.</p></body></html>
+<style>body{font-family:system-ui,sans-serif;max-width:680px;margin:40px auto;padding:0 16px;line-height:1.6}h2{margin-top:28px}</style></head><body>
+<h1>clipbot – Privacy policy</h1><p>Last updated: 9 November 2026</p>
+<p>clipbot is a personal automation tool run by one individual developer (Georgios Kimionakis Sykianakis) for his own YouTube channel. It is not offered to other users.</p>
+<h2>YouTube API Services</h2>
+<p>clipbot uses <b>YouTube API Services</b> to upload videos to the owner's own channel. By using clipbot you agree to be bound by the
+<a href="https://www.youtube.com/t/terms">YouTube Terms of Service</a>. YouTube is a Google service, and Google's handling of data is described in the
+<a href="http://www.google.com/policies/privacy">Google Privacy Policy</a>.</p>
+<h2>What data is accessed</h2>
+<ul><li>Google permission requested: <code>youtube.upload</code> only — used solely to upload Shorts to the owner's channel.</li>
+<li>Public Twitch clip information (title, streamer name, clip URL) from the Twitch API, for clips the streamers have allowed the owner to repost.</li>
+<li>No personal data about anyone else is collected, stored, sold or shared. No cookies or analytics are used.</li></ul>
+<h2>Storage</h2>
+<p>The Google OAuth refresh token is stored only as an encrypted GitHub Actions secret controlled by the owner. clipbot keeps a list of already-posted Twitch clip IDs so it does not post a clip twice. Downloaded clips are deleted immediately after upload.</p>
+<h2>Revoking access and deleting data</h2>
+<p>Access can be revoked at any time at <a href="https://security.google.com/settings/security/permissions">Google security settings</a>. Deleting the GitHub secrets and repository removes all stored data. Requests to delete data can be sent to the contact below and are completed within 7 days.</p>
+<h2>Contact</h2><p>gloomylovescoke@gmail.com · <a href="https://github.com/kaafros/twitch-clipbot">github.com/kaafros/twitch-clipbot</a></p></body></html>
