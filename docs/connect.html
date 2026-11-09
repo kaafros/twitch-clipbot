@@ -1,0 +1,41 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>clipbot – Connect YouTube</title>
+<style>body{font-family:system-ui,sans-serif;max-width:640px;margin:40px auto;padding:0 16px;line-height:1.5}
+input{width:100%;padding:8px;margin:4px 0 12px;box-sizing:border-box;font:inherit}button{padding:10px 18px;font:inherit;cursor:pointer}
+.box{background:#f3f3f3;border-radius:8px;padding:12px;margin:10px 0;word-break:break-all}.err{color:#b00}</style></head><body>
+<h1>Connect YouTube to clipbot</h1>
+<div id="start">
+<p>Paste the <b>Web</b> OAuth client values from Google Cloud. They stay in this browser tab only.</p>
+<label>Client ID<input id="cid"></label><label>Client secret<input id="csec" type="password"></label>
+<button id="go">Sign in with Google</button></div>
+<div id="result" hidden></div>
+<script>
+const REDIRECT = location.origin + location.pathname;
+const $ = id => document.getElementById(id);
+$('go').onclick = () => {
+  const cid = $('cid').value.trim(), csec = $('csec').value.trim();
+  if (!cid || !csec) return alertBox('Fill in both fields.');
+  sessionStorage.setItem('cid', cid); sessionStorage.setItem('csec', csec);
+  const p = new URLSearchParams({client_id: cid, redirect_uri: REDIRECT, response_type: 'code',
+    scope: 'https://www.googleapis.com/auth/youtube.upload', access_type: 'offline', prompt: 'consent'});
+  location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + p;
+};
+function alertBox(msg){ const r=$('result'); r.hidden=false; r.innerHTML='<p class="err">'+msg+'</p>'; }
+(async () => {
+  const q = new URLSearchParams(location.search);
+  if (q.get('error')) return alertBox('Google returned: ' + q.get('error'));
+  const code = q.get('code'); if (!code) return;
+  $('start').hidden = true;
+  const cid = sessionStorage.getItem('cid'), csec = sessionStorage.getItem('csec');
+  if (!cid) return alertBox('Session expired. Reload the page without the code and try again.');
+  const r = await fetch('https://oauth2.googleapis.com/token', {method:'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body: new URLSearchParams({code, client_id: cid, client_secret: csec, redirect_uri: REDIRECT, grant_type:'authorization_code'})});
+  const j = await r.json();
+  history.replaceState(null, '', REDIRECT); sessionStorage.clear();
+  if (!j.refresh_token) return alertBox('No refresh token: ' + (j.error_description || j.error || JSON.stringify(j)));
+  const res = $('result'); res.hidden = false;
+  res.innerHTML = '<h2>✅ Connected</h2><p>Add these as GitHub Actions secrets, then close this tab:</p>' +
+    '<p><b>YT_CLIENT_ID</b></p><div class="box"></div><p><b>YT_CLIENT_SECRET</b></p><div class="box"></div><p><b>YT_REFRESH_TOKEN</b></p><div class="box"></div>';
+  const b = res.querySelectorAll('.box'); b[0].textContent = cid; b[1].textContent = csec; b[2].textContent = j.refresh_token;
+})();
+</script></body></html>
