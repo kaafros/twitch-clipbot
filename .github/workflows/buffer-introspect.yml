@@ -1,0 +1,13 @@
+name: buffer-introspect
+on:
+  workflow_dispatch:
+    inputs:
+      post: {description: "Buffer post id", required: true}
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install requests && python tools/buffer_introspect.py "${{ inputs.post }}"
+        env:
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
