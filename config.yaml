@@ -36,6 +36,7 @@ tiktok: true            # also post every Short to TikTok via Buffer (needs BUFF
 
 # Video layout: zoom (big video, title banner on top) | fill (full-screen crop) |
 #               blur (whole video, small) | split (face-cam on top, needs facecam below)
+gameplay_bg: assets/bg/subway.mp4   # split-screen background (your own Subway Surfers recording)
 layout: zoom
 zoom: 1.0               # >1.0 zooms in (bigger video, but cuts the sides - can hide the face-cam)
 # For split layout, add the face-cam box per streamer as fractions [x, y, width, height], e.g.

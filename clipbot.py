@@ -156,7 +156,8 @@ def make_vertical(src, dst, clip, cfg, nice_title):
     elif layout == "gameplay":
         # split screen: clip on top, original endless-runner gameplay below (keeps viewers watching)
         bg = ROOT / cfg.get("gameplay_bg", "assets/bg/runner.mp4")
-        extra_inputs = ["-stream_loop", "-1", "-ss", str(random.Random(clip["id"]).uniform(0, 25)), "-i", str(bg)]
+        bg_start = random.Random(clip["id"]).uniform(0, max(0.0, editing.duration(bg) - 35))
+        extra_inputs = ["-stream_loop", "-1", "-ss", f"{bg_start:.1f}", "-i", str(bg)]
         half = H // 2
         top, fg_h = 0, half  # used for subtitle placement
         vf = (f"[0:v]scale={W}:{half}:force_original_aspect_ratio=increase,crop={W}:{half}{editing.punch(W, half, Z)}[clip];"
