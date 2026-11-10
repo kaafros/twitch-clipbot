@@ -79,6 +79,18 @@ def overlay_text(text):
     return re.sub(r"\s+", " ", "".join(keep)).strip()
 
 
+def title_text(lines, size, center_y, tmpdir, key):
+    """Draw each title line separately (a newline inside drawtext shows up as a box on some ffmpeg builds)."""
+    line_h = int(size * 1.25)
+    y0 = int(center_y - line_h * len(lines) / 2)
+    parts = []
+    for i, line in enumerate(lines):
+        f = Path(tmpdir) / f"{key}_t{i}.txt"
+        f.write_text(line)
+        parts.append(drawtext(f, size, y0 + i * line_h))
+    return ",".join(parts)
+
+
 def drawtext(textfile, size, y_expr, color="white"):
     return (f"drawtext=fontfile={FONT}:textfile={textfile}:fontsize={size}:fontcolor={color}:"
             f"borderw=6:bordercolor=black:line_spacing=12:x=(w-text_w)/2:y={y_expr}")
@@ -89,7 +101,8 @@ def make_vertical(src, dst, clip, cfg, nice_title):
     streamer_cfg = next((s for s in cfg["streamers"] if s["name"].lower() == clip["broadcaster_login"]), {})
     tmp = Path(dst).parent
     title_file, name_file = tmp / f"{clip['id']}_t.txt", tmp / f"{clip['id']}_n.txt"
-    title_file.write_text("\n".join(textwrap.wrap(overlay_text(nice_title), 22)[:3]))
+    title_lines = textwrap.wrap(overlay_text(nice_title), 22)[:3] or [" "]
+    T = lambda size, cy: title_text(title_lines, size, cy, tmp, clip["id"])
     name_file.write_text(clip.get("tag_text") or f"twitch.tv/{clip['broadcaster_login']}")
 
     layout = streamer_cfg.get("layout", layout)
@@ -122,7 +135,7 @@ def make_vertical(src, dst, clip, cfg, nice_title):
                   f"[0:v]crop={gw}:{usable_h}:{gx}:0,scale={W}:{game_h},setsar=1[game];"
                   f"color=c=black:s={W}x{band}:r=30[band];"
                   f"[band][cam][game]vstack=inputs=3:shortest=1,"
-                  f"{drawtext(title_file, 58, f'({band}-text_h)/2')}")
+                  f"{T(58, band // 2)}")
         else:
             layout = "gameplay"  # no face-cam found: use the runner split-screen instead
     if layout == "facecam":
@@ -137,17 +150,17 @@ def make_vertical(src, dst, clip, cfg, nice_title):
               f"[1:v]scale={W}:{half},setsar=1[game];"
               f"[clip][game]vstack,"
               f"drawbox=x=0:y=0:w={W}:h=230:color=black@0.45:t=fill,"
-              f"{drawtext(title_file, 62, '(230-text_h)/2')}")
+              f"{T(62, 115)}")
     elif layout == "split" and streamer_cfg.get("facecam"):
         x, y, w, h = streamer_cfg["facecam"]  # fractions of the frame
         cam_h = 640
         vf = (f"[0:v]crop=iw*{w}:ih*{h}:iw*{x}:ih*{y},scale={W}:{cam_h}:force_original_aspect_ratio=increase,"
               f"crop={W}:{cam_h}[cam];"
               f"[0:v]scale=-2:{H - cam_h},crop={W}:{H - cam_h}[game];"
-              f"[cam][game]vstack,{drawtext(title_file, 60, cam_h + 40)}")
+              f"[cam][game]vstack,{T(60, cam_h + 100)}")
     elif layout == "fill":
         vf = (f"[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},"
-              f"{drawtext(title_file, 64, 220)}")
+              f"{T(64, 260)}")
     else:  # "zoom" (default) or "blur": blurred background, video in the middle, title on top
         zoom = cfg.get("zoom", 1.0) if layout == "zoom" else 1.0
         fg_w = int(W * zoom) // 2 * 2
@@ -157,7 +170,7 @@ def make_vertical(src, dst, clip, cfg, nice_title):
               f"eq=brightness=-0.12[bg];"
               f"[0:v]scale={fg_w}:{fg_h},crop={W}:{fg_h}[fg];"
               f"[bg][fg]overlay=0:{top},"
-              f"{drawtext(title_file, 68, f'({top}-text_h)/2')},"
+              f"{T(68, top // 2)},"
               f"{drawtext(name_file, 44, f'{top + fg_h}+({top}-text_h)/2', '#bf94ff')}")
     if cfg.get("subtitles", True):
         try:
