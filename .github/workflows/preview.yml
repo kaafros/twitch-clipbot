@@ -26,5 +26,5 @@ jobs:
       - name: Save to preview-data branch
         run: |
           git config user.name clipbot; git config user.email clipbot@users.noreply.github.com
-          git checkout --orphan tmp && git rm -rq --cached . && git add -f preview && git commit -qm "preview ${{ inputs.stage }}"
+          git checkout --orphan tmp && git rm -rqf --cached . && git add -f preview && git commit -qm "preview ${{ inputs.stage }}"
           git push -f origin tmp:preview-data
