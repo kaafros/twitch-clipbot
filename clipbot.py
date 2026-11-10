@@ -43,6 +43,8 @@ def helix(path, token, **params):
 def get_clips(cfg, token):
     clips = []
     for s in cfg["streamers"]:
+        if s.get("paused"):
+            continue
         since = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(hours=s.get("lookback_hours", cfg["lookback_hours"])))
         since = since.strftime("%Y-%m-%dT%H:%M:%SZ")
         users = helix("users", token, login=s["name"])
@@ -67,8 +69,14 @@ W, H = 1080, 1920
 
 
 def overlay_text(text):
-    """Keep only characters the font can draw (drops emoji)."""
-    return "".join(ch for ch in text if ord(ch) < 0x2000).strip()
+    """Keep only characters the font can draw (drops emoji and invisible/odd symbols)."""
+    import unicodedata
+    keep = []
+    for ch in text:
+        cat = unicodedata.category(ch)
+        if ord(ch) < 0x2000 and (cat[0] in "LNP" or ch == " " or cat in ("Sm", "Sc")):
+            keep.append(ch)
+    return re.sub(r"\s+", " ", "".join(keep)).strip()
 
 
 def drawtext(textfile, size, y_expr, color="white"):

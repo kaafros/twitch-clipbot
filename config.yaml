@@ -3,6 +3,7 @@
 # campaign: Content Rewards link - you get a GitHub notification to submit each new Short.
 streamers:
   - name: clix
+    paused: true          # paused for now - focusing on Jynxzi + Speed
     priority: 10
     hashtags: ["#Clix"]
     campaign: https://contentrewards.com/c/campaigns/17ff5e37-a774-4a75-a1a4-d47dba98a60e
@@ -12,13 +13,15 @@ streamers:
     lookback_hours: 720   # best clips of the last 30 days
     min_duration: 15
   - name: kaicenat
+    paused: true
     layout: gameplay      # split screen: clip on top, runner game below
   - name: lacyoffline_
+    paused: true
     layout: gameplay
 
 min_views: 50            # skip clips with fewer views
 lookback_hours: 48       # only clips created in the last N hours
-max_uploads_per_run: 2   # YouTube API quota allows ~6 uploads/day total
+max_uploads_per_run: 2   # total per run incl. batch clips (YouTube allows ~6/day)   # YouTube API quota allows ~6 uploads/day total
 privacy: public
 subtitles: true         # burn auto-generated captions into every video
 tiktok: true            # also post every Short to TikTok via Buffer (needs BUFFER_API_KEY secret)
