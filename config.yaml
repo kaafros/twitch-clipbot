@@ -3,27 +3,25 @@
 # campaign: Content Rewards link - you get a GitHub notification to submit each new Short.
 streamers:
   - name: clix
-    paused: true          # paused for now - focusing on Jynxzi + Speed
-    priority: 10
     hashtags: ["#Clix"]
     campaign: https://contentrewards.com/c/campaigns/17ff5e37-a774-4a75-a1a4-d47dba98a60e
   - name: jynxzi
-    priority: 5
     layout: facecam       # his face-cam on top (found automatically), gameplay below
     lookback_hours: 720   # best clips of the last 30 days
     min_duration: 15
     crop_bottom: 0.15     # hides the captions his stream already has, so ours don't double up
   - name: kaicenat
-    paused: true
     layout: gameplay      # split screen: clip on top, runner game below
   - name: lacyoffline_
-    paused: true
     layout: gameplay
 
-min_views: 50            # skip clips with fewer views
+min_views: 1000          # only clips that are already taking off on Twitch
 lookback_hours: 48       # only clips created in the last N hours
 max_uploads_per_run: 2   # total per run incl. batch clips (YouTube allows ~6/day)   # YouTube API quota allows ~6 uploads/day total
 privacy: public
+viral_edit: true        # hook first + trim to max_length around the best moment
+max_length: 30
+punch_in: true          # quick zoom-ins on loud reactions
 subtitles: true         # burn auto-generated captions into every video
 tiktok: true            # also post every Short to TikTok via Buffer (needs BUFFER_API_KEY secret)
 
@@ -40,6 +38,7 @@ tags: [twitch, gaming, shorts, clips]
 batch_per_run: 1
 batches:
   - id: speed-expedia-2
+    paused: true          # Speed paused by request
     file: batches/speed/speed-expedia-2.mp4
     title: "IShowSpeed tells a fan he's going to JAPAN with Expedia 🇯🇵 #IShowSpeed #shorts"
     description: |
@@ -49,6 +48,7 @@ batches:
     tags: [IShowSpeed, Expedia, Japan, travel, shorts]
     campaign: https://contentrewards.com/c/campaigns/afeca1a0-f44c-46ad-8194-09d62b56589e
   - id: speed-expedia-1
+    paused: true          # Speed paused by request
     file: batches/speed/speed-expedia-1.mp4
     title: "IShowSpeed x Expedia surprise a fan with a dream trip to Japan 🇯🇵 #IShowSpeed #shorts"
     description: |
@@ -60,6 +60,9 @@ batches:
 
   # Funny IShowSpeed reels (with permission) - rendered with the split-screen gameplay layout
   - id: speed-funny-ankle
+    paused: true          # Speed paused by request
+    trim: [15, 45]      # tight cut around the joke
+    hook: [39.6, 42.9]      # punchline shown first
     source: batches/speed-funny/ankle.mp4
     streamer: IShowSpeed
     layout: gameplay
@@ -72,6 +75,9 @@ batches:
       #IShowSpeed #Speed #DerekJeter #baseball #shorts
     tags: [IShowSpeed, Speed, Derek Jeter, baseball, funny, shorts]
   - id: speed-funny-not-a-pro
+    paused: true          # Speed paused by request
+    trim: [6.2, 38.7]      # tight cut around the joke
+    hook: [18.4, 20.6]      # punchline shown first
     source: batches/speed-funny/not-a-pro.mp4
     streamer: IShowSpeed
     layout: gameplay
@@ -84,6 +90,9 @@ batches:
       #IShowSpeed #Speed #DerekJeter #baseball #shorts
     tags: [IShowSpeed, Speed, Derek Jeter, baseball, funny, shorts]
   - id: speed-funny-scorekeeping
+    paused: true          # Speed paused by request
+    trim: [13.8, 45.3]      # tight cut around the joke
+    hook: [27.8, 31.0]      # punchline shown first
     source: batches/speed-funny/scorekeeping.mp4
     streamer: IShowSpeed
     layout: gameplay
@@ -96,6 +105,9 @@ batches:
       #IShowSpeed #Speed #DerekJeter #baseball #shorts
     tags: [IShowSpeed, Speed, Derek Jeter, baseball, funny, shorts]
   - id: speed-funny-rules
+    paused: true          # Speed paused by request
+    trim: [12.2, 45.7]      # tight cut around the joke
+    hook: [39.6, 43.3]      # punchline shown first
     source: batches/speed-funny/rules.mp4
     streamer: IShowSpeed
     layout: gameplay
@@ -108,6 +120,9 @@ batches:
       #IShowSpeed #Speed #DerekJeter #baseball #shorts
     tags: [IShowSpeed, Speed, Derek Jeter, baseball, funny, shorts]
   - id: speed-funny-pitch-behind
+    paused: true          # Speed paused by request
+    trim: [2.3, 32.3]      # tight cut around the joke
+    hook: [18.6, 21.4]      # punchline shown first
     source: batches/speed-funny/pitch-behind.mp4
     streamer: IShowSpeed
     layout: gameplay

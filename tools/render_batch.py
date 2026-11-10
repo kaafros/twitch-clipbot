@@ -7,7 +7,8 @@ cfg = yaml.safe_load(open("config.yaml"))
 Path("preview").mkdir(exist_ok=True)
 for it in [b for b in cfg["batches"] if b["id"] in sys.argv[1:]]:
     fake = {"id": it["id"], "broadcaster_name": it.get("streamer", ""), "broadcaster_login": it.get("streamer", "").lower(),
-            "tag_text": it.get("tag_text"), "prompt": it.get("prompt")}
+            "tag_text": it.get("tag_text"), "prompt": it.get("prompt"),
+            "trim": it.get("trim"), "hook": it.get("hook")}
     clipbot.make_vertical(Path(it["source"]), Path(f"preview/{it['id']}.mp4"), fake,
                           dict(cfg, layout=it.get("layout", "zoom")), it.get("overlay_title", it["title"]))
     print("RENDERED", it["id"])

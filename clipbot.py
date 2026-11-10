@@ -16,6 +16,7 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
 import captions
+import editing
 import facecam
 import tiktok
 
@@ -97,6 +98,16 @@ def drawtext(textfile, size, y_expr, color="white"):
 
 
 def make_vertical(src, dst, clip, cfg, nice_title):
+    if cfg.get("viral_edit", True):
+        try:
+            trim, hook = clip.get("trim"), clip.get("hook")
+            if not trim and not hook:
+                trim, hook = editing.auto_plan(src, cfg.get("max_length", 30))
+            src = editing.build_edit(src, Path(dst).parent / f"{clip['id']}_edit.mp4",
+                                     tuple(trim) if trim else None, tuple(hook) if hook else None)
+        except Exception as e:
+            print(f"Viral edit skipped: {e}")
+    Z = editing.zoom_expr(editing.punch_times(src)) if cfg.get("punch_in", True) else None
     layout = cfg.get("layout", "zoom")
     streamer_cfg = next((s for s in cfg["streamers"] if s["name"].lower() == clip["broadcaster_login"]), {})
     tmp = Path(dst).parent
@@ -131,7 +142,7 @@ def make_vertical(src, dst, clip, cfg, nice_title):
             elif f_left > fw / 2:
                 gx = min(gx, int(f_left - face[2] * fw * 1.5) - gw)
             gx = max(0, min(fw - gw, gx)) // 2 * 2
-            vf = (f"[0:v]crop={cw}:{ch}:{cx}:{cy},scale={W}:{cam_h},setsar=1[cam];"
+            vf = (f"[0:v]crop={cw}:{ch}:{cx}:{cy},scale={W}:{cam_h}{editing.punch(W, cam_h, Z)},setsar=1[cam];"
                   f"[0:v]crop={gw}:{usable_h}:{gx}:0,scale={W}:{game_h},setsar=1[game];"
                   f"color=c=black:s={W}x{band}:r=30[band];"
                   f"[band][cam][game]vstack=inputs=3:shortest=1,"
@@ -146,7 +157,7 @@ def make_vertical(src, dst, clip, cfg, nice_title):
         extra_inputs = ["-stream_loop", "-1", "-ss", str(random.Random(clip["id"]).uniform(0, 25)), "-i", str(bg)]
         half = H // 2
         top, fg_h = 0, half  # used for subtitle placement
-        vf = (f"[0:v]scale={W}:{half}:force_original_aspect_ratio=increase,crop={W}:{half}[clip];"
+        vf = (f"[0:v]scale={W}:{half}:force_original_aspect_ratio=increase,crop={W}:{half}{editing.punch(W, half, Z)}[clip];"
               f"[1:v]scale={W}:{half},setsar=1[game];"
               f"[clip][game]vstack,"
               f"drawbox=x=0:y=0:w={W}:h=230:color=black@0.45:t=fill,"
@@ -168,7 +179,7 @@ def make_vertical(src, dst, clip, cfg, nice_title):
         top = (H - fg_h) // 2
         vf = (f"[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},boxblur=25:5,"
               f"eq=brightness=-0.12[bg];"
-              f"[0:v]scale={fg_w}:{fg_h},crop={W}:{fg_h}[fg];"
+              f"[0:v]scale={fg_w}:{fg_h},crop={W}:{fg_h}{editing.punch(W, fg_h, Z)}[fg];"
               f"[bg][fg]overlay=0:{top},"
               f"{T(68, top // 2)},"
               f"{drawtext(name_file, 44, f'{top + fg_h}+({top}-text_h)/2', '#bf94ff')}")
@@ -302,7 +313,7 @@ def main():
     cfg = yaml.safe_load((ROOT / "config.yaml").read_text())
     posted = set(json.loads(STATE.read_text())) if STATE.exists() else set()
     done = 0
-    pending = [b for b in cfg.get("batches", []) if f"batch:{b['id']}" not in posted]
+    pending = [b for b in cfg.get("batches", []) if f"batch:{b['id']}" not in posted and not b.get("paused")]
     if pending:
         yt = youtube()
         for item in pending[: cfg.get("batch_per_run", 1)]:
@@ -311,7 +322,8 @@ def main():
                     # raw footage: render it now with the chosen layout (+ subtitles) like a Twitch clip
                     fake = {"id": item["id"], "broadcaster_name": item.get("streamer", ""),
                             "broadcaster_login": item.get("streamer", "").lower(),
-                            "tag_text": item.get("tag_text"), "prompt": item.get("prompt")}
+                            "tag_text": item.get("tag_text"), "prompt": item.get("prompt"),
+                            "trim": item.get("trim"), "hook": item.get("hook")}
                     out = Path(tempfile.gettempdir()) / f"{item['id']}_v.mp4"
                     rcfg = dict(cfg, layout=item.get("layout", cfg.get("layout", "zoom")))
                     make_vertical(ROOT / item["source"], out, fake, rcfg, item.get("overlay_title", item["title"]))
