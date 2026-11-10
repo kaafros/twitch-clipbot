@@ -1,0 +1,7 @@
+days: 7
+per_streamer: 3
+layout: zoom
+subtitles: true
+streamers:
+  - name: jynxzi
+  - name: gothamchess
