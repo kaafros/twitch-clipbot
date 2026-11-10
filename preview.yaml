@@ -1,9 +1,11 @@
-per_streamer: 3
-min_duration: 15
+per_streamer: 4
+min_duration: 12
 layout: zoom
 subtitles: true
+viral_edit: true
+punch_in: true
+max_length: 30
 streamers:
-  - name: jynxzi
+  - name: caseoh_
     layout: facecam
-    crop_bottom: 0.15
-    days: 30
+    days: 7

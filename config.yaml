@@ -7,6 +7,10 @@ streamers:
     lookback_hours: 720   # best clips of the last 30 days
     min_duration: 15
     crop_bottom: 0.15     # hides the captions his stream already has, so ours don't double up
+  - name: caseoh_
+    layout: facecam       # face-cam on top when gaming; runner split-screen for just-chatting
+    lookback_hours: 168   # best clips of the last 7 days
+    min_duration: 12
   - name: kaicenat
     layout: gameplay      # split screen: clip on top, runner game below
   - name: lacyoffline_

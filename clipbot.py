@@ -124,6 +124,8 @@ def make_vertical(src, dst, clip, cfg, nice_title):
             face = facecam.find_face_box(src)
         except Exception as e:
             print(f"Face detection failed: {e}")
+        if face and face[2] > cfg.get("fullcam_face_width", 0.16):
+            face = None  # face fills the screen = no separate gameplay -> runner split-screen instead
         if face:
             fw, fh = (int(v) for v in subprocess.run(
                 ["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height",
