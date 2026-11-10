@@ -41,16 +41,17 @@ def helix(path, token, **params):
 
 
 def get_clips(cfg, token):
-    since = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(hours=cfg["lookback_hours"]))
-    since = since.strftime("%Y-%m-%dT%H:%M:%SZ")
     clips = []
     for s in cfg["streamers"]:
+        since = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(hours=s.get("lookback_hours", cfg["lookback_hours"])))
+        since = since.strftime("%Y-%m-%dT%H:%M:%SZ")
         users = helix("users", token, login=s["name"])
         if not users:
             print(f"Streamer not found: {s['name']}")
             continue
-        for c in helix("clips", token, broadcaster_id=users[0]["id"], started_at=since, first=50):
-            if c["view_count"] >= cfg["min_views"]:
+        now = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        for c in helix("clips", token, broadcaster_id=users[0]["id"], started_at=since, ended_at=now, first=100):
+            if c["view_count"] >= cfg["min_views"] and c["duration"] >= s.get("min_duration", 0):
                 c["broadcaster_login"] = s["name"].lower()
                 clips.append(c)
     prio = {s["name"].lower(): s.get("priority", 0) for s in cfg["streamers"]}
@@ -158,9 +159,10 @@ def make_vertical(src, dst, clip, cfg, nice_title):
                 mv = 520
             else:
                 mv = H - (top + fg_h) + 20  # just over the bottom edge of the video
-            ass = captions.build(src, tmp / f"{clip['id']}.ass", margin_v=mv)
+            prompt = f"{clip.get('broadcaster_name', '')} stream clip. Twitch chat, bro, bruh, W, L."
+            ass = captions.build(src, tmp / f"{clip['id']}.ass", margin_v=mv, prompt=prompt)
             if ass:
-                vf += f",subtitles={ass}:fontsdir=/usr/share/fonts/truetype/dejavu"
+                vf += f",subtitles={ass}:fontsdir=/usr/share/fonts"
         except Exception as e:
             print(f"Subtitles skipped: {e}")
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), *extra_inputs, "-filter_complex", vf,
@@ -236,11 +238,12 @@ def submit_alert(label, campaign, yt_url, tt_url):
 
 def burn_subtitles(src, dst, margin_v):
     """Add auto subtitles to an already-vertical video. Returns dst, or src if there was no speech."""
-    ass = captions.build(src, Path(dst).with_suffix(".ass"), margin_v=margin_v)
+    ass = captions.build(src, Path(dst).with_suffix(".ass"), margin_v=margin_v,
+                         prompt="IShowSpeed, Expedia, Japan, Hudson. Stream clip.")
     if not ass:
         return src
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-vf",
-                    f"subtitles={ass}:fontsdir=/usr/share/fonts/truetype/dejavu",
+                    f"subtitles={ass}:fontsdir=/usr/share/fonts",
                     "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-c:a", "copy", str(dst)], check=True)
     return dst
 

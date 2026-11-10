@@ -4,6 +4,5 @@ layout: zoom
 subtitles: true
 streamers:
   - name: jynxzi
+    layout: facecam
     days: 30
-  - name: gothamchess
-    days: 120
