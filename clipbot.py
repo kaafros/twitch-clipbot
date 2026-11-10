@@ -16,6 +16,7 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
 import captions
+import facecam
 import tiktok
 
 ROOT = Path(__file__).parent
@@ -84,7 +85,38 @@ def make_vertical(src, dst, clip, cfg, nice_title):
 
     layout = streamer_cfg.get("layout", layout)
     extra_inputs = []
-    if layout == "gameplay":
+    if layout == "facecam":
+        face = None
+        try:
+            face = facecam.find_face_box(src)
+        except Exception as e:
+            print(f"Face detection failed: {e}")
+        if face:
+            fw, fh = (int(v) for v in subprocess.run(
+                ["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height",
+                 "-of", "csv=p=0:s=x", str(src)], capture_output=True, text=True).stdout.strip().split("x"))
+            band, cam_h, game_h = 200, 760, H // 2
+            cx, cy, cw, ch = facecam.cam_crop(face, fw, fh, W / cam_h)
+            gw = min(fw, int(fh * W / game_h)) // 2 * 2
+            top, fg_h = 0, H // 2  # subtitles go on the seam
+            # gameplay crop: centred, but pushed away from the face-cam side so it doesn't show twice
+            gx = (fw - gw) // 2
+            f_left, f_right = face[0] * fw, (face[0] + face[2]) * fw
+            if f_right < fw / 2:
+                gx = max(gx, int(f_right + face[2] * fw * 1.5))
+            elif f_left > fw / 2:
+                gx = min(gx, int(f_left - face[2] * fw * 1.5) - gw)
+            gx = max(0, min(fw - gw, gx)) // 2 * 2
+            vf = (f"[0:v]crop={cw}:{ch}:{cx}:{cy},scale={W}:{cam_h},setsar=1[cam];"
+                  f"[0:v]crop={gw}:{fh}:{gx}:0,scale={W}:{game_h},setsar=1[game];"
+                  f"color=c=black:s={W}x{band}:r=30[band];"
+                  f"[band][cam][game]vstack=inputs=3:shortest=1,"
+                  f"{drawtext(title_file, 58, f'({band}-text_h)/2')}")
+        else:
+            layout = "gameplay"  # no face-cam found: use the runner split-screen instead
+    if layout == "facecam":
+        pass
+    elif layout == "gameplay":
         # split screen: clip on top, original endless-runner gameplay below (keeps viewers watching)
         bg = ROOT / cfg.get("gameplay_bg", "assets/bg/runner.mp4")
         extra_inputs = ["-stream_loop", "-1", "-ss", str(random.Random(clip["id"]).uniform(0, 25)), "-i", str(bg)]
@@ -118,7 +150,7 @@ def make_vertical(src, dst, clip, cfg, nice_title):
               f"{drawtext(name_file, 44, f'{top + fg_h}+({top}-text_h)/2', '#bf94ff')}")
     if cfg.get("subtitles", True):
         try:
-            if layout == "gameplay":
+            if layout in ("gameplay", "facecam"):
                 mv = H // 2 - 70  # centred on the seam between clip and gameplay
             elif layout == "split" and streamer_cfg.get("facecam"):
                 mv = 520

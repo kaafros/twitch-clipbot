@@ -6,3 +6,4 @@ google-auth
 google-auth-oauthlib
 faster-whisper
 numpy
+opencv-python-headless<5
