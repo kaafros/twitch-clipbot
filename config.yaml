@@ -2,9 +2,6 @@
 # priority: higher = posted first. hashtags: added to title + description.
 # campaign: Content Rewards link - you get a GitHub notification to submit each new Short.
 streamers:
-  - name: clix
-    hashtags: ["#Clix"]
-    campaign: https://contentrewards.com/c/campaigns/17ff5e37-a774-4a75-a1a4-d47dba98a60e
   - name: jynxzi
     layout: facecam       # his face-cam on top (found automatically), gameplay below
     lookback_hours: 720   # best clips of the last 30 days
