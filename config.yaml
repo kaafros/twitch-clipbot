@@ -15,6 +15,10 @@ streamers:
     layout: facecam
     lookback_hours: 168
     min_duration: 12
+  - name: dantes
+    layout: facecam       # League gameplay below, his face-cam on top
+    lookback_hours: 168
+    min_duration: 12
   - name: kaicenat
     layout: gameplay      # split screen: clip on top, runner game below
   - name: lacyoffline_
