@@ -57,3 +57,65 @@ batches:
       #IShowSpeed #Expedia #Japan #shorts
     tags: [IShowSpeed, Expedia, Japan, travel, shorts]
     campaign: https://contentrewards.com/c/campaigns/afeca1a0-f44c-46ad-8194-09d62b56589e
+
+  # Funny IShowSpeed reels (with permission) - rendered with the split-screen gameplay layout
+  - id: speed-funny-ankle
+    source: batches/speed-funny/ankle.mp4
+    streamer: IShowSpeed
+    layout: gameplay
+    title: "Speed says his ANKLE made the play 😭 #IShowSpeed #shorts"
+    overlay_title: "Speed: My ankle stopped the ball so I made the play"
+    prompt: "IShowSpeed, Derek Jeter, Mason Winn, baseball, tee ball, shortstop, bro."
+    description: |
+      Speed says his ANKLE made the play 😭
+      From IShowSpeed's video 'I Tried Becoming a Pro Baseball Player ft. Derek Jeter!' https://www.youtube.com/@IShowSpeed
+      #IShowSpeed #Speed #DerekJeter #baseball #shorts
+    tags: [IShowSpeed, Speed, Derek Jeter, baseball, funny, shorts]
+  - id: speed-funny-not-a-pro
+    source: batches/speed-funny/not-a-pro.mp4
+    streamer: IShowSpeed
+    layout: gameplay
+    title: "Speed asks Derek Jeter if he can go pro... 💀 #IShowSpeed #shorts"
+    overlay_title: "Speed asks Derek Jeter if he can go pro"
+    prompt: "IShowSpeed, Derek Jeter, Mason Winn, baseball, tee ball, shortstop, bro."
+    description: |
+      Speed asks Derek Jeter if he can go pro... 💀
+      From IShowSpeed's video 'I Tried Becoming a Pro Baseball Player ft. Derek Jeter!' https://www.youtube.com/@IShowSpeed
+      #IShowSpeed #Speed #DerekJeter #baseball #shorts
+    tags: [IShowSpeed, Speed, Derek Jeter, baseball, funny, shorts]
+  - id: speed-funny-scorekeeping
+    source: batches/speed-funny/scorekeeping.mp4
+    streamer: IShowSpeed
+    layout: gameplay
+    title: "Speed tries to scam Derek Jeter's scorekeeping 😂 #IShowSpeed #shorts"
+    overlay_title: "Speed tries to scam Derek Jeter's scorekeeping"
+    prompt: "IShowSpeed, Derek Jeter, Mason Winn, baseball, tee ball, shortstop, bro."
+    description: |
+      Speed tries to scam Derek Jeter's scorekeeping 😂
+      From IShowSpeed's video 'I Tried Becoming a Pro Baseball Player ft. Derek Jeter!' https://www.youtube.com/@IShowSpeed
+      #IShowSpeed #Speed #DerekJeter #baseball #shorts
+    tags: [IShowSpeed, Speed, Derek Jeter, baseball, funny, shorts]
+  - id: speed-funny-rules
+    source: batches/speed-funny/rules.mp4
+    streamer: IShowSpeed
+    layout: gameplay
+    title: "Speed doesn't know the rules of baseball 😭 #IShowSpeed #shorts"
+    overlay_title: "Speed doesn't know the rules of baseball"
+    prompt: "IShowSpeed, Derek Jeter, Mason Winn, baseball, tee ball, shortstop, bro."
+    description: |
+      Speed doesn't know the rules of baseball 😭
+      From IShowSpeed's video 'I Tried Becoming a Pro Baseball Player ft. Derek Jeter!' https://www.youtube.com/@IShowSpeed
+      #IShowSpeed #Speed #DerekJeter #baseball #shorts
+    tags: [IShowSpeed, Speed, Derek Jeter, baseball, funny, shorts]
+  - id: speed-funny-pitch-behind
+    source: batches/speed-funny/pitch-behind.mp4
+    streamer: IShowSpeed
+    layout: gameplay
+    title: "Pitcher throws BEHIND Speed and he panics 😂 #IShowSpeed #shorts"
+    overlay_title: "Pitcher throws behind Speed and he panics"
+    prompt: "IShowSpeed, Derek Jeter, Mason Winn, baseball, tee ball, shortstop, bro."
+    description: |
+      Pitcher throws BEHIND Speed and he panics 😂
+      From IShowSpeed's video 'I Tried Becoming a Pro Baseball Player ft. Derek Jeter!' https://www.youtube.com/@IShowSpeed
+      #IShowSpeed #Speed #DerekJeter #baseball #shorts
+    tags: [IShowSpeed, Speed, Derek Jeter, baseball, funny, shorts]

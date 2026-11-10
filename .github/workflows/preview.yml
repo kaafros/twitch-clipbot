@@ -19,7 +19,10 @@ jobs:
       - run: pip install -r requirements.txt
       - if: inputs.stage == 'render'
         run: git fetch origin preview-data && git checkout origin/preview-data -- preview
-      - run: python tools/preview.py ${{ inputs.stage }} preview.yaml
+      - if: inputs.stage == 'batch'
+        run: python tools/render_batch.py ${{ inputs.from_run }}
+      - if: inputs.stage != 'batch'
+        run: python tools/preview.py ${{ inputs.stage }} preview.yaml
         env:
           TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
           TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}

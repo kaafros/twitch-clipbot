@@ -182,7 +182,7 @@ def make_vertical(src, dst, clip, cfg, nice_title):
                 mv = 520
             else:
                 mv = H - (top + fg_h) + 20  # just over the bottom edge of the video
-            prompt = f"{clip.get('broadcaster_name', '')} stream clip. Twitch chat, bro, bruh, W, L."
+            prompt = clip.get("prompt") or f"{clip.get('broadcaster_name', '')} stream clip. Twitch chat, bro, bruh, W, L."
             ass = captions.build(src, tmp / f"{clip['id']}.ass", margin_v=mv, prompt=prompt)
             if ass:
                 vf += f",subtitles={ass}:fontsdir=/usr/share/fonts"
@@ -307,8 +307,18 @@ def main():
         yt = youtube()
         for item in pending[: cfg.get("batch_per_run", 1)]:
             try:
-                item["_path"] = ROOT / item["file"]
-                if cfg.get("subtitles", True):
+                if item.get("source"):
+                    # raw footage: render it now with the chosen layout (+ subtitles) like a Twitch clip
+                    fake = {"id": item["id"], "broadcaster_name": item.get("streamer", ""),
+                            "broadcaster_login": item.get("streamer", "").lower(),
+                            "tag_text": item.get("tag_text"), "prompt": item.get("prompt")}
+                    out = Path(tempfile.gettempdir()) / f"{item['id']}_v.mp4"
+                    rcfg = dict(cfg, layout=item.get("layout", cfg.get("layout", "zoom")))
+                    make_vertical(ROOT / item["source"], out, fake, rcfg, item.get("overlay_title", item["title"]))
+                    item["_path"] = out
+                else:
+                    item["_path"] = ROOT / item["file"]
+                if cfg.get("subtitles", True) and not item.get("source"):
                     try:
                         item["_path"] = burn_subtitles(item["_path"], Path(tempfile.gettempdir()) / f"{item['id']}_sub.mp4",
                                                        item.get("subs_margin", 570))
