@@ -5,4 +5,5 @@ subtitles: true
 streamers:
   - name: jynxzi
     layout: facecam
+    crop_bottom: 0.15
     days: 30

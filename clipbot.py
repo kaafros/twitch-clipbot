@@ -105,8 +105,10 @@ def make_vertical(src, dst, clip, cfg, nice_title):
                 ["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height",
                  "-of", "csv=p=0:s=x", str(src)], capture_output=True, text=True).stdout.strip().split("x"))
             band, cam_h, game_h = 200, 760, H // 2
-            cx, cy, cw, ch = facecam.cam_crop(face, fw, fh, W / cam_h)
-            gw = min(fw, int(fh * W / game_h)) // 2 * 2
+            # cut off the bottom strip where the stream's own captions sit (so subtitles don't show twice)
+            usable_h = int(fh * (1 - streamer_cfg.get("crop_bottom", 0.0))) // 2 * 2
+            cx, cy, cw, ch = facecam.cam_crop(face, fw, usable_h, W / cam_h)
+            gw = min(fw, int(usable_h * W / game_h)) // 2 * 2
             top, fg_h = 0, H // 2  # subtitles go on the seam
             # gameplay crop: centred, but pushed away from the face-cam side so it doesn't show twice
             gx = (fw - gw) // 2
@@ -117,7 +119,7 @@ def make_vertical(src, dst, clip, cfg, nice_title):
                 gx = min(gx, int(f_left - face[2] * fw * 1.5) - gw)
             gx = max(0, min(fw - gw, gx)) // 2 * 2
             vf = (f"[0:v]crop={cw}:{ch}:{cx}:{cy},scale={W}:{cam_h},setsar=1[cam];"
-                  f"[0:v]crop={gw}:{fh}:{gx}:0,scale={W}:{game_h},setsar=1[game];"
+                  f"[0:v]crop={gw}:{usable_h}:{gx}:0,scale={W}:{game_h},setsar=1[game];"
                   f"color=c=black:s={W}x{band}:r=30[band];"
                   f"[band][cam][game]vstack=inputs=3:shortest=1,"
                   f"{drawtext(title_file, 58, f'({band}-text_h)/2')}")
