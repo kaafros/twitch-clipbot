@@ -14,7 +14,11 @@ if stage == "frames":
     picked = []
     for s in cfg["streamers"]:
         uid = clipbot.helix("users", tok, login=s["name"])[0]["id"]
-        clips = sorted(clipbot.helix("clips", tok, broadcaster_id=uid, started_at=since, first=50),
+        since_s = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=s.get("days", cfg.get("days", 7)))).strftime("%Y-%m-%dT%H:%M:%SZ")
+        allc = clipbot.helix("clips", tok, broadcaster_id=uid, started_at=since_s,
+                             ended_at=dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), first=100)
+        print("FOUND", s["name"], len(allc))
+        clips = sorted([c for c in allc if c["duration"] >= cfg.get("min_duration", 12)],
                        key=lambda c: c["view_count"], reverse=True)[: cfg.get("per_streamer", 3)]
         for c in clips:
             c["broadcaster_login"] = s["name"]

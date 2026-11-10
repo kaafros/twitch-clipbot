@@ -1,7 +1,9 @@
-days: 7
 per_streamer: 3
+min_duration: 15
 layout: zoom
 subtitles: true
 streamers:
   - name: jynxzi
+    days: 30
   - name: gothamchess
+    days: 120
