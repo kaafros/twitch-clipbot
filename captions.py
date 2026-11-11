@@ -25,15 +25,32 @@ def _clean(word):
     return w.replace("\\", "")
 
 
-def build(src, out, margin_v=680, font_size=92, max_words=3, prompt=""):
-    """Write an .ass subtitle file for src. Returns the path, or None if there's no speech."""
+_cache = {}
+
+
+def transcribe(src, prompt=""):
+    """Word-level transcript (cached per file)."""
     global _model
+    key = str(src)
+    if key in _cache:
+        return _cache[key]
     from faster_whisper import WhisperModel
     if _model is None:
         _model = WhisperModel("small.en", device="cpu", compute_type="int8")
     segs, _ = _model.transcribe(_load_audio(src), word_timestamps=True, vad_filter=True, beam_size=5,
                                 initial_prompt=prompt or None)
     words = [w for s in segs for w in (s.words or []) if _clean(w.word)]
+    _cache[key] = words
+    return words
+
+
+def text(words):
+    return " ".join(w.word.strip() for w in words)
+
+
+def build(src, out, margin_v=680, font_size=92, max_words=3, prompt=""):
+    """Write an .ass subtitle file for src. Returns the path, or None if there's no speech."""
+    words = transcribe(src, prompt)
     if not words:
         return None
 

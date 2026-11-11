@@ -4,20 +4,20 @@
 streamers:
   - name: jynxzi
     layout: facecam       # his face-cam on top (found automatically), gameplay below
-    lookback_hours: 720   # best clips of the last 30 days
+    lookback_hours: 72    # fresh clips only (last 3 days)
     min_duration: 15
     crop_bottom: 0.15     # hides the captions his stream already has, so ours don't double up
   - name: caseoh_
     layout: facecam       # face-cam on top when gaming; runner split-screen for just-chatting
-    lookback_hours: 168   # best clips of the last 7 days
+    lookback_hours: 72
     min_duration: 12
   - name: ohnepixel
     layout: facecam
-    lookback_hours: 168
+    lookback_hours: 72
     min_duration: 12
   - name: dantes
     layout: facecam       # League gameplay below, his face-cam on top
-    lookback_hours: 168
+    lookback_hours: 72
     min_duration: 12
   - name: kaicenat
     layout: gameplay      # split screen: clip on top, runner game below
@@ -31,6 +31,7 @@ privacy: public
 viral_edit: true        # hook first + trim to max_length around the best moment
 max_length: 30
 punch_in: true          # quick zoom-ins on loud reactions
+quote_titles: true      # weak Twitch titles -> quote the punchline as the title
 subtitles: true         # burn auto-generated captions into every video
 tiktok: true            # also post every Short to TikTok via Buffer (needs BUFFER_API_KEY secret)
 

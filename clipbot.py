@@ -54,6 +54,9 @@ def get_clips(cfg, token):
             continue
         now = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         for c in helix("clips", token, broadcaster_id=users[0]["id"], started_at=since, ended_at=now, first=100):
+            if unsafe(c["title"]):
+                print(f"Skipped (blocked words in title): {c['title']}")
+                continue
             if c["view_count"] >= cfg["min_views"] and c["duration"] >= s.get("min_duration", 0):
                 c["broadcaster_login"] = s["name"].lower()
                 clips.append(c)
@@ -97,17 +100,38 @@ def drawtext(textfile, size, y_expr, color="white"):
             f"borderw=6:bordercolor=black:line_spacing=12:x=(w-text_w)/2:y={y_expr}")
 
 
+class UnsafeClip(Exception):
+    pass
+
+
 def make_vertical(src, dst, clip, cfg, nice_title):
     if cfg.get("viral_edit", True):
         try:
             trim, hook = clip.get("trim"), clip.get("hook")
             if not trim and not hook:
                 trim, hook = editing.auto_plan(src, cfg.get("max_length", 30))
+                clip["hook"] = hook
             src = editing.build_edit(src, Path(dst).parent / f"{clip['id']}_edit.mp4",
                                      tuple(trim) if trim else None, tuple(hook) if hook else None)
         except Exception as e:
             print(f"Viral edit skipped: {e}")
     Z = editing.zoom_expr(editing.punch_times(src)) if cfg.get("punch_in", True) else None
+    words = []
+    if cfg.get("subtitles", True) or cfg.get("quote_titles", True):
+        try:
+            prompt = clip.get("prompt") or f"{clip.get('broadcaster_name', '')} stream clip. Twitch chat, bro, bruh, W, L."
+            words = captions.transcribe(src, prompt)
+        except Exception as e:
+            print(f"Transcription failed: {e}")
+    if words and unsafe(captions.text(words)):
+        raise UnsafeClip("transcript contains blocked words")
+    if cfg.get("quote_titles", True) and words and not clip.get("keep_title"):
+        weak = len(re.findall(r"[A-Za-z]{2,}", clip.get("title", ""))) < 4
+        hook = clip.get("hook")
+        q = quote_title(clip, words, (hook[1] - hook[0]) if hook else 3.0) if weak else None
+        if q:
+            nice_title = q.rsplit(" ", 1)[0]  # same text without the emoji (the font can't draw emoji)
+            clip["final_title"] = q
     layout = cfg.get("layout", "zoom")
     streamer_cfg = next((s for s in cfg["streamers"] if s["name"].lower() == clip["broadcaster_login"]), {})
     tmp = Path(dst).parent
@@ -207,11 +231,34 @@ def make_vertical(src, dst, clip, cfg, nice_title):
                     "-c:a", "aac", "-b:a", "128k", "-t", "180", "-shortest", str(dst)], check=True)
 
 
+BLOCKED = re.compile(
+    r"\bn[\s-]?word\b|\bnigg|\bniga\b|\bfagg?|\bf[a@]g\b|\bretard|\bkys\b|\bnsfw\b|\bslur|\bracis|"
+    r"\bporn|\bnud(e|ity)|\bonlyfans\b|\bsuicid|\bdrug|\bweed\b|\bcocaine|\bbanned?\b|\btos\b",
+    re.I)
+
+
+def unsafe(text):
+    """True if a title or transcript has slurs / content that gets videos or channels flagged."""
+    return bool(BLOCKED.search(text or ""))
+
+
 FALLBACK_TITLES = ["{s} can't believe this", "{s} had chat going crazy", "Wait for it... ({s})",
                    "{s} lost it", "This {s} moment is insane", "{s} was NOT ready"]
 
 
+def quote_title(clip, words, hook_len):
+    """Title like: Jynxzi: "HE'S CHEATING" 😭  (the line said in the hook / loudest moment)."""
+    seg = [w for w in words if w.start < max(hook_len, 3.0)] or words[:8]
+    q = re.sub(r"[^\w' ?!]", "", captions.text(seg[:7])).strip()
+    if len(q.split()) < 2 or unsafe(q):
+        return None
+    emoji = random.Random(clip["id"]).choice(["😭", "💀", "😂", "🤯"])
+    return f'{clip["broadcaster_name"]}: "{q.upper()}" {emoji}'[:85]
+
+
 def make_title(clip):
+    if clip.get("final_title"):
+        return clip["final_title"]
     s = clip["broadcaster_name"]
     t = re.sub(r"(.)\1{3,}", r"\1\1\1", clip["title"].replace("<", "").replace(">", "")).strip()
     letters = {c for c in t.lower() if c.isalpha()}
@@ -370,6 +417,10 @@ def main():
                 posted.add(clip["id"])
                 STATE.write_text(json.dumps(sorted(posted), indent=1))
                 done += 1
+            except UnsafeClip as e:
+                print(f"Skipped '{clip['title']}': {e}")
+                posted.add(clip["id"])  # never try this clip again
+                STATE.write_text(json.dumps(sorted(posted), indent=1))
             except Exception as e:  # keep going with the next clip
                 print(f"Failed on {clip['url']}: {e}")
 
