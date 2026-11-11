@@ -1,0 +1,37 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Montserrat Black,92,&H00FFFFFF,&H00FFFFFF,&H00000000,&H99000000,-1,0,0,0,100,100,1,0,1,9,4,2,50,50,890,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.98,0:00:01.42,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}I{\c&H00FFFFFF&\fscx100\fscy100} DON'T MAKE
+Dialogue: 0,0:00:01.42,0:00:01.60,Default,,0,0,0,,I {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}DON'T{\c&H00FFFFFF&\fscx100\fscy100} MAKE
+Dialogue: 0,0:00:01.60,0:00:01.78,Default,,0,0,0,,I DON'T {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}MAKE{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:01.78,0:00:02.26,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}NOTHING{\c&H00FFFFFF&\fscx100\fscy100} CLAP
+Dialogue: 0,0:00:02.26,0:00:02.66,Default,,0,0,0,,NOTHING {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}CLAP{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:03.60,0:00:04.04,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}DOG{\c&H00FFFFFF&\fscx100\fscy100} YOU THINK
+Dialogue: 0,0:00:04.04,0:00:04.10,Default,,0,0,0,,DOG {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}YOU{\c&H00FFFFFF&\fscx100\fscy100} THINK
+Dialogue: 0,0:00:04.10,0:00:04.20,Default,,0,0,0,,DOG YOU {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}THINK{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:04.20,0:00:04.32,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}I{\c&H00FFFFFF&\fscx100\fscy100} DIDN'T SEE
+Dialogue: 0,0:00:04.32,0:00:04.44,Default,,0,0,0,,I {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}DIDN'T{\c&H00FFFFFF&\fscx100\fscy100} SEE
+Dialogue: 0,0:00:04.44,0:00:04.60,Default,,0,0,0,,I DIDN'T {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}SEE{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:04.60,0:00:05.10,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}THIS{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:16.52,0:00:16.86,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}WIND{\c&H00FFFFFF&\fscx100\fscy100} WITH THE
+Dialogue: 0,0:00:16.86,0:00:17.08,Default,,0,0,0,,WIND {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}WITH{\c&H00FFFFFF&\fscx100\fscy100} THE
+Dialogue: 0,0:00:17.08,0:00:17.20,Default,,0,0,0,,WIND WITH {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}THE{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:17.20,0:00:17.70,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}FIVE{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:26.19,0:00:26.39,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FF7F&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}I{\c&H00FFFFFF&\fscx100\fscy100} DON'T MAKE
+Dialogue: 0,0:00:26.39,0:00:26.59,Default,,0,0,0,,I {\c&H0000FF7F&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}DON'T{\c&H00FFFFFF&\fscx100\fscy100} MAKE
+Dialogue: 0,0:00:26.59,0:00:26.77,Default,,0,0,0,,I DON'T {\c&H0000FF7F&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}MAKE{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:26.77,0:00:27.23,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}NOTHING{\c&H00FFFFFF&\fscx100\fscy100} CLAP
+Dialogue: 0,0:00:27.23,0:00:27.77,Default,,0,0,0,,NOTHING {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}CLAP{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:30.60,0:00:30.94,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}THOSE{\c&H00FFFFFF&\fscx100\fscy100} DAYS ARE
+Dialogue: 0,0:00:30.94,0:00:31.24,Default,,0,0,0,,THOSE {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}DAYS{\c&H00FFFFFF&\fscx100\fscy100} ARE
+Dialogue: 0,0:00:31.24,0:00:31.48,Default,,0,0,0,,THOSE DAYS {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}ARE{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:31.48,0:00:31.78,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}OVER{\c&H00FFFFFF&\fscx100\fscy100}

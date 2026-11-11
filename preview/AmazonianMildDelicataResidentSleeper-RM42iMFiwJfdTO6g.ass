@@ -1,0 +1,26 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Montserrat Black,92,&H00FFFFFF,&H00FFFFFF,&H00000000,&H99000000,-1,0,0,0,100,100,1,0,1,9,4,2,50,50,890,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:01.02,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}NEVERMIND{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:03.52,0:00:04.16,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}YOU'RE{\c&H00FFFFFF&\fscx100\fscy100} JUST READING
+Dialogue: 0,0:00:04.16,0:00:04.34,Default,,0,0,0,,YOU'RE {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}JUST{\c&H00FFFFFF&\fscx100\fscy100} READING
+Dialogue: 0,0:00:04.34,0:00:04.66,Default,,0,0,0,,YOU'RE JUST {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}READING{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:04.66,0:00:04.92,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}A{\c&H00FFFFFF&\fscx100\fscy100} BOOK
+Dialogue: 0,0:00:04.92,0:00:05.24,Default,,0,0,0,,A {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}BOOK{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:10.28,0:00:10.50,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}I{\c&H00FFFFFF&\fscx100\fscy100} DON'T KNOW
+Dialogue: 0,0:00:10.50,0:00:10.72,Default,,0,0,0,,I {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}DON'T{\c&H00FFFFFF&\fscx100\fscy100} KNOW
+Dialogue: 0,0:00:10.72,0:00:10.98,Default,,0,0,0,,I DON'T {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}KNOW{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:11.34,0:00:11.58,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}EVERYBODY{\c&H00FFFFFF&\fscx100\fscy100} LOOKS NORMAL
+Dialogue: 0,0:00:11.58,0:00:11.94,Default,,0,0,0,,EVERYBODY {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}LOOKS{\c&H00FFFFFF&\fscx100\fscy100} NORMAL
+Dialogue: 0,0:00:11.94,0:00:12.24,Default,,0,0,0,,EVERYBODY LOOKS {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}NORMAL{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:12.24,0:00:12.74,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}HERE{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:13.32,0:00:13.96,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}NEVERMIND{\c&H00FFFFFF&\fscx100\fscy100}

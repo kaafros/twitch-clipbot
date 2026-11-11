@@ -1,0 +1,15 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Montserrat Black,92,&H00FFFFFF,&H00FFFFFF,&H00000000,&H99000000,-1,0,0,0,100,100,1,0,1,9,4,2,50,50,890,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:03.34,0:00:03.74,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}IS{\c&H00FFFFFF&\fscx100\fscy100} THIS EGBERT
+Dialogue: 0,0:00:03.74,0:00:03.86,Default,,0,0,0,,IS {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}THIS{\c&H00FFFFFF&\fscx100\fscy100} EGBERT
+Dialogue: 0,0:00:03.86,0:00:04.18,Default,,0,0,0,,IS THIS {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}EGBERT{\c&H00FFFFFF&\fscx100\fscy100}

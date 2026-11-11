@@ -1,0 +1,44 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Montserrat Black,92,&H00FFFFFF,&H00FFFFFF,&H00000000,&H99000000,-1,0,0,0,100,100,1,0,1,9,4,2,50,50,890,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.59,0:00:01.87,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}GOODBYE{\c&H00FFFFFF&\fscx100\fscy100} WHAT'S YOU
+Dialogue: 0,0:00:01.87,0:00:02.25,Default,,0,0,0,,GOODBYE {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}WHAT'S{\c&H00FFFFFF&\fscx100\fscy100} YOU
+Dialogue: 0,0:00:02.25,0:00:02.49,Default,,0,0,0,,GOODBYE WHAT'S {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}YOU{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:10.36,0:00:11.02,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}GOODBYE{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:11.66,0:00:12.06,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}WHAT'S{\c&H00FFFFFF&\fscx100\fscy100} YOU TALKING
+Dialogue: 0,0:00:12.06,0:00:12.28,Default,,0,0,0,,WHAT'S {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}YOU{\c&H00FFFFFF&\fscx100\fscy100} TALKING
+Dialogue: 0,0:00:12.28,0:00:12.72,Default,,0,0,0,,WHAT'S YOU {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}TALKING{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:12.72,0:00:13.22,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}ABOUT{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:13.54,0:00:13.70,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}YOU{\c&H00FFFFFF&\fscx100\fscy100} DONE LOST
+Dialogue: 0,0:00:13.70,0:00:13.94,Default,,0,0,0,,YOU {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}DONE{\c&H00FFFFFF&\fscx100\fscy100} LOST
+Dialogue: 0,0:00:13.94,0:00:14.28,Default,,0,0,0,,YOU DONE {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}LOST{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:14.28,0:00:14.50,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}THE{\c&H00FFFFFF&\fscx100\fscy100} EASIEST CHOICE
+Dialogue: 0,0:00:14.50,0:00:14.96,Default,,0,0,0,,THE {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}EASIEST{\c&H00FFFFFF&\fscx100\fscy100} CHOICE
+Dialogue: 0,0:00:14.96,0:00:15.28,Default,,0,0,0,,THE EASIEST {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}CHOICE{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:15.28,0:00:15.50,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}OF{\c&H00FFFFFF&\fscx100\fscy100} MY LIFE
+Dialogue: 0,0:00:15.50,0:00:15.72,Default,,0,0,0,,OF {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}MY{\c&H00FFFFFF&\fscx100\fscy100} LIFE
+Dialogue: 0,0:00:15.72,0:00:16.10,Default,,0,0,0,,OF MY {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}LIFE{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:16.10,0:00:16.28,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FF7F&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}I{\c&H00FFFFFF&\fscx100\fscy100} DON'T KNOW
+Dialogue: 0,0:00:16.28,0:00:16.56,Default,,0,0,0,,I {\c&H0000FF7F&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}DON'T{\c&H00FFFFFF&\fscx100\fscy100} KNOW
+Dialogue: 0,0:00:16.56,0:00:16.78,Default,,0,0,0,,I DON'T {\c&H0000FF7F&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}KNOW{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:16.78,0:00:17.02,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}Y{\c&H00FFFFFF&\fscx100\fscy100} 'ALL
+Dialogue: 0,0:00:17.02,0:00:17.34,Default,,0,0,0,,Y {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}'ALL{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:17.94,0:00:18.06,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}WHAT{\c&H00FFFFFF&\fscx100\fscy100} WAS YOU
+Dialogue: 0,0:00:18.06,0:00:18.42,Default,,0,0,0,,WHAT {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}WAS{\c&H00FFFFFF&\fscx100\fscy100} YOU
+Dialogue: 0,0:00:18.42,0:00:18.74,Default,,0,0,0,,WHAT WAS {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}YOU{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:18.74,0:00:19.24,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}FOR{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:19.36,0:00:19.84,Default,,0,0,0,,YOU {\c&H00FFFF00&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}REALLY{\c&H00FFFFFF&\fscx100\fscy100} THOUGHT
+Dialogue: 0,0:00:19.84,0:00:20.26,Default,,0,0,0,,YOU REALLY {\c&H00FFFF00&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}THOUGHT{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:20.26,0:00:20.60,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}ABOUT{\c&H00FFFFFF&\fscx100\fscy100} THE -
+Dialogue: 0,0:00:20.60,0:00:20.82,Default,,0,0,0,,ABOUT {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}THE{\c&H00FFFFFF&\fscx100\fscy100} -
+Dialogue: 0,0:00:20.82,0:00:21.42,Default,,0,0,0,,ABOUT THE {\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}-{\c&H00FFFFFF&\fscx100\fscy100}
+Dialogue: 0,0:00:21.42,0:00:21.58,Default,,0,0,0,,{\fad(60,0)}{\c&H0000FFFF&\fscx112\fscy112\t(0,90,\fscx122\fscy122)\t(90,180,\fscx112\fscy112)}WHAT{\c&H00FFFFFF&\fscx100\fscy100}
