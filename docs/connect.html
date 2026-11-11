@@ -16,7 +16,7 @@ $('go').onclick = () => {
   if (!cid || !csec) return alertBox('Fill in both fields.');
   sessionStorage.setItem('cid', cid); sessionStorage.setItem('csec', csec);
   const p = new URLSearchParams({client_id: cid, redirect_uri: REDIRECT, response_type: 'code',
-    scope: 'https://www.googleapis.com/auth/youtube.upload', access_type: 'offline', prompt: 'consent'});
+    scope: 'https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube', access_type: 'offline', prompt: 'consent'});
   location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + p;
 };
 function alertBox(msg){ const r=$('result'); r.hidden=false; r.innerHTML='<p class="err">'+msg+'</p>'; }

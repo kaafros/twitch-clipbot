@@ -240,7 +240,7 @@ def make_vertical(src, dst, clip, cfg, nice_title):
 
 BLOCKED = re.compile(
     r"\bn[\s-]?word\b|\bnigg|\bniga\b|\bfagg?|\bf[a@]g\b|\bretard|\bkys\b|\bnsfw\b|\bslur|\bracis|"
-    r"\bporn|\bnud(e|ity)|\bonlyfans\b|\bsuicid|\bdrug|\bweed\b|\bcocaine|\bbanned?\b|\btos\b",
+    r"\bporn|\bnud(e|ity)|\bonlyfans\b|\bsuicid|\bcocaine",
     re.I)
 
 
