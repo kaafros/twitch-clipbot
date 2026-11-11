@@ -59,9 +59,16 @@ def get_clips(cfg, token):
                 continue
             if c["view_count"] >= cfg["min_views"] and c["duration"] >= s.get("min_duration", 0):
                 c["broadcaster_login"] = s["name"].lower()
+                c["broadcaster_name"] = s.get("display", c["broadcaster_name"])
                 clips.append(c)
     prio = {s["name"].lower(): s.get("priority", 0) for s in cfg["streamers"]}
-    return sorted(clips, key=lambda c: (prio.get(c["broadcaster_login"], 0), c["view_count"]), reverse=True)
+    now = dt.datetime.now(dt.timezone.utc)
+
+    def velocity(c):  # views per hour, so fresh clips that are blowing up win over old ones
+        age = (now - dt.datetime.fromisoformat(c["created_at"].replace("Z", "+00:00"))).total_seconds() / 3600
+        return c["view_count"] / max(age, 1.0) ** 0.8
+
+    return sorted(clips, key=lambda c: (prio.get(c["broadcaster_login"], 0), velocity(c)), reverse=True)
 
 
 def download(url, out):
