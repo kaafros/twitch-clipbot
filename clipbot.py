@@ -433,4 +433,19 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main()import re, unicodedata
+
+BLOCKED = re.compile(
+    r"\bn[\s-]?word\b|\bnigg|\bniga\b|\bfagg?|\bf[a@]g\b|\bretard|\bkys\b|\bkike|\bchink|\bspic\b|\bwetback|\btrann(y|ies)\b|\bcoon\b|\bracis|\bslur"
+    r"|\bporn|\bnud(e|ity)|\bnsfw\b|\bonlyfans\b|\bsuicid|\bcocaine"
+    r"|\bf+u+c+k|\bsh[i1]t|\bbitch|\bcunt|\bdick\b|\bpiss|\bbastard|\bass(hole)?\b|\bwtf\b|\bdamn\b"
+    r"|\bgambl|\bcasino|\bcase[\s-]?open|\broobet|\bstake\.?com|\bbetting\b",
+    re.I)
+
+LEET = str.maketrans("0134@$", "oieaas")
+
+def unsafe(text):
+    raw = unicodedata.normalize("NFKD", text or "")
+    plain = re.sub(r"[*_]", "", raw).translate(LEET)  # catches n*gga, sh1t, etc.
+    return bool(BLOCKED.search(raw) or BLOCKED.search(plain))
+
