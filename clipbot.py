@@ -451,6 +451,20 @@ def unsafe(text):
     plain = re.sub(r"[*_]", "", raw).translate(LEET)  # catches n*gga, sh1t, etc.
     return bool(BLOCKED.search(raw) or BLOCKED.search(plain))
 
+_all_clips = get_clips
 
+
+def get_clips(cfg, token):
+    clips = _all_clips(cfg, token)
+    game = cfg.get("only_game")
+    if not game:
+        return clips
+    found = helix("games", token, name=game)
+    if not found:
+        print(f"Game not found on Twitch: {game}")
+        return []
+    kept = [c for c in clips if c.get("game_id") == found[0]["id"]]
+    print(f"{len(kept)} of {len(clips)} clips are {game}")
+    return kept
 if __name__ == "__main__":
     main()
