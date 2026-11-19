@@ -466,5 +466,45 @@ def get_clips(cfg, token):
     kept = [c for c in clips if c.get("game_id") == found[0]["id"]]
     print(f"{len(kept)} of {len(clips)} clips are {game}")
     return kept
+_all_clips = get_clips
+_make_vertical = make_vertical
+_detector = None
+NSFW = {"FEMALE_BREAST_EXPOSED", "FEMALE_GENITALIA_EXPOSED", "MALE_GENITALIA_EXPOSED",
+        "BUTTOCKS_EXPOSED", "ANUS_EXPOSED"}
+
+
+def get_clips(cfg, token):
+    clips = _all_clips(cfg, token)
+    game = cfg.get("only_game")
+    if not game:
+        return clips
+    found = helix("games", token, name=game)
+    if not found:
+        print(f"Game not found on Twitch: {game}")
+        return []
+    kept = [c for c in clips if c.get("game_id") == found[0]["id"]]
+    print(f"{len(kept)} of {len(clips)} clips are {game}")
+    return kept
+
+
+def has_nudity(src, threshold=0.35):
+    global _detector
+    from nudenet import NudeDetector
+    if _detector is None:
+        _detector = NudeDetector()
+    folder = Path(tempfile.mkdtemp())
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-vf", "fps=3",
+                    str(folder / "f%04d.jpg")], check=True)
+    for frame in sorted(folder.glob("f*.jpg")):
+        for d in _detector.detect(str(frame)):
+            if d["class"] in NSFW and d["score"] >= threshold:
+                return True
+    return False
+
+
+def make_vertical(src, dst, clip, cfg, nice_title):
+    if cfg.get("nsfw_check", True) and has_nudity(src):
+        raise UnsafeClip("possible nudity detected")
+    return _make_vertical(src, dst, clip, cfg, nice_title)
 if __name__ == "__main__":
     main()
